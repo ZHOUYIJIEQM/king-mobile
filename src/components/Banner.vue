@@ -1,8 +1,10 @@
 <template>
   <swiper 
-    class="mySwiper" 
+    v-if="swiperData.length"
+    class="mySwiper"
     :autoplay="autoPlay" 
     :pagination="pagination" 
+    :loop="true"
     :modules="modules"
   >
     <swiper-slide 
@@ -57,6 +59,7 @@ export default {
 <style lang="scss" scoped>
 .mySwiper {
   height: 100%;
+  font-size: 0;
   .slide-item {
     height: 100%;
     img {
@@ -67,7 +70,7 @@ export default {
 
   :deep(.swiper-pagination) {
     text-align: right;
-    padding-right: .5333rem;
+    padding-right: .2667rem;
 
     .swiper-pagination-bullet {
       border-radius: 2px;

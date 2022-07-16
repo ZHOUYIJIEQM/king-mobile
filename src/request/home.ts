@@ -12,11 +12,35 @@ const HomeReq = {
   /**
    * 新闻 公告 ...
    */
-  getNews: () => {
+  getShortnews: () => {
     return request({
-      url: "/homw/news",
+      url: "/home/shortNews",
     });
   },
+  /**
+   * 英雄列表轮播
+   */
+  getHeroBanner: () => {
+    return request({
+      url: '/home/heroListBanner'
+    })
+  },
+  /**
+   * 获取英雄列表
+   */
+  getHeroList: () => {
+    return request({
+      url: '/home/heroList'
+    })
+  },
+  /**
+   * 首页精彩视频
+   */  
+  getHighLigthVdo: () => {
+    return request({
+      url: '/home/highlightVdo'
+    })
+  }
 };
 
 export default HomeReq

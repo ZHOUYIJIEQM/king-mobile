@@ -11,7 +11,11 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { getCurrentInstance, ref } from 'vue';
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const router = useRouter()
+const route = useRoute()
 
 interface NavBar {
   title: string,
@@ -49,12 +53,17 @@ let activeIndex = ref<number>(0)
 const tapNavbar = (index: number) => {
   activeIndex.value = index
   // todo: 路由跳转
+  router.push({
+    name: props.navTitle[index].name,
+  })
 }
 
+// 初始化活动项
+activeIndex.value = props.navTitle.findIndex(i => i.name === route.name)
 
 </script>
 <style lang="scss" scoped>
-$navHeight: 42px;
+$navHeight: 1.12rem;
 
 .navbar-comp {
   height: $navHeight;
