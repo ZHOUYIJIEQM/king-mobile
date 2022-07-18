@@ -16,6 +16,16 @@ const StrategyReq = {
     return request({
       url: '/strategy/allStrategy'
     })
+  },
+  /**
+   * 获取英雄对应攻略
+   */
+  getHeroStrategy: (params: any) => {
+    return request({
+      url: '/strategy/heroStrategy',
+      method: 'POST',
+      data: params
+    })
   }
 }
 

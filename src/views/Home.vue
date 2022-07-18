@@ -1,10 +1,7 @@
 <template>
   <KeepScrollVue>
     <div class="home-page">
-      <div class="banner-box" v-if="firstSwiper.data.length">
-        <BannerVue :swiper-data="firstSwiper.data"></BannerVue>
-      </div>
-      <div class="banner-loading loading-skeleton" v-else></div>
+      <BannerVue :swiper-data="firstSwiper.data"></BannerVue>
       <div class="entry-box">
         <ul class="entry-list">
           <li v-for="(item, index) in entryList.data" :key="index" :class="item.cName">
@@ -94,7 +91,7 @@
           </div>
         </div>
 
-        <div class="cont-item">
+        <div class="cont-item vdo-hot">
           <div class="cont-title">
             <span class="ico_video"></span>
             <span class="text">精彩视频</span>
@@ -121,7 +118,7 @@ import VideoInfoVue from "../components/VideoInfo.vue";
 import KeepScrollVue from '../components/KeepScroll.vue'
 
 const app: any = getCurrentInstance();
-const homeReq = app.appContext.config.globalProperties.$HomeReq;
+const homeReq = app.proxy.$HomeReq;
 
 interface SwiperDataType {
   img: string;
@@ -606,6 +603,10 @@ onMounted(() => {
           }
         }
       }
+    }
+
+    .vdo-hot {
+      min-height: 7.4667rem;
     }
 
     .highvdo-box {

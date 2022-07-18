@@ -1,45 +1,49 @@
 <template>
-  <div id="msg-box" v-if="visible">
-    <div class="msg-text">{{ msgText }}</div>
-  </div>
+  <transition name="fade">
+    <div class="toast-text" v-if="visible" :class="toastObj.className">
+      {{ toastObj.msg }}
+    </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { reactive, ref } from "vue";
+import type { ToastType } from "../../models/toast";
 
+let timer: any = null
 const visible = ref<boolean>(false);
-const msgText = ref<string>("");
+const toastObj: ToastType = reactive({ msg: "" });
 
-const show = (msg: string, timer: number = 2000) => {
-  msgText.value = msg;
+/**
+ * 提示
+ */
+const ToastShow = (params: ToastType) => {
+  const { msg, duration = 2000, className = "" } = params;
+  toastObj.msg = msg;
+  toastObj.className = className;
   visible.value = true;
-  setTimeout(() => {
+  clearTimeout(timer)
+  timer = setTimeout(() => {
     visible.value = false;
-  }, timer);
+    toastObj.msg = "";
+  }, duration);
 };
 
 defineExpose({
-  show,
+  ToastShow,
 });
 </script>
 <style scoped lang="scss">
-#msg-box {
+.toast-text {
+  z-index: 9999;
+  font-size: 0.3733rem;
   position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  .msg-text {
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 4px;
-    color: white;
-    font-size: 14px;
-    padding: 10px 20px;
-    user-select: none;
-  }
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: hsl(0deg 0% 0% / 70%);
+  border-radius: 0.16rem;
+  color: #fff;
+  padding: 0.24rem 0.4rem;
 }
 </style>

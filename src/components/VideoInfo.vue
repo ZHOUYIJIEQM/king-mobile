@@ -3,7 +3,7 @@
     <div class="vdo-pre">
       <img :src="videoInfo.img" alt="">
       <span class="play-icon"></span>
-      <span class="play-duration">{{videoInfo.iTime}}</span>
+      <span class="play-duration" v-show="videoInfo?.iTime?.length">{{videoInfo.iTime}}</span>
     </div>
     <div class="vdo-text">
       <p class="title two-eli">{{videoInfo.name}}</p>

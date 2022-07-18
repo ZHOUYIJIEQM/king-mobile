@@ -16,6 +16,7 @@
       </a>
     </swiper-slide>
   </swiper>
+  <div class="banner-loading loading-skeleton" v-else></div>
 </template>
 <script lang="ts">
 // Import Swiper Vue.js components
@@ -84,5 +85,8 @@ export default {
       }
     }
   }
+}
+.banner-loading {
+  min-height: 4.2667rem;
 }
 </style>

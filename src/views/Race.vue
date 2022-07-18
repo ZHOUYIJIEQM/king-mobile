@@ -7,12 +7,12 @@
   </KeepScrollVue>
 </template>
 <script lang="ts" setup>
-import { getCurrentInstance } from 'vue';
+import { getCurrentInstance, onMounted } from 'vue';
 import KeepScrollVue from '../components/KeepScroll.vue';
-const app = getCurrentInstance()
-console.log(app.proxy.$HomeReq);
-const $toast = app?.appContext.config.globalProperties.$toast
-$toast.show('hhh')
+const app: any = getCurrentInstance()
+onMounted(() => {
+  app.proxy.$toast({msg: 'toast 提示'})
+})
 </script>
 <style lang="scss" scoped>
 

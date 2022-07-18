@@ -1,5 +1,5 @@
 <template>
-  <div class="nav-banner-box" v-if="navSwiperData.length">
+  <div class="nav-banner-box">
     <slot name="title" :swiperTitle="title" :swiperEl="swiperRef"></slot>
     <div class="title-box" v-if="!customTitle" ref="titleBox">
       <span
@@ -11,6 +11,7 @@
       >{{ i }}</span>
     </div>
     <swiper 
+      v-if="navSwiperData.length"
       class="news-swiper" 
       :resistanceRatio="0"
       @swiper="newsSwiper"
@@ -32,7 +33,6 @@
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
 import { ref, watch } from "vue";
-import { height } from "dom7";
 
 interface swiperType {
   name: string;
@@ -82,21 +82,23 @@ const slideChange = () => {
   activeIndex.value = index
   emit('slidechange', index)
 
-  let itemInfo = titleItem.value[index].getBoundingClientRect()
-  let left = 0
-  if (itemInfo.left < 0) {
-    left = titleItem.value[index].offsetLeft - parseInt(getComputedStyle(titleBox.value, null).paddingLeft)
-    titleBox.value.scrollTo({
-      left,
-      behavior: "smooth"
-    })
-  }
-  if (itemInfo.left > titleBox.value.offsetWidth - parseInt(getComputedStyle(titleItem.value[index], null).marginRight)) {
-    left = titleItem.value[index].offsetLeft - titleBox.value.offsetWidth + itemInfo.width + parseInt(getComputedStyle(titleItem.value[index], null).marginRight)
-    titleBox.value.scrollTo({
-      left,
-      behavior: "smooth"
-    })
+  if (!props.customTitle) {
+    let itemInfo = titleItem.value[index].getBoundingClientRect()
+    let left = 0
+    if (itemInfo.left < 0) {
+      left = titleItem.value[index].offsetLeft - parseInt(getComputedStyle(titleBox.value, null).paddingLeft)
+      titleBox.value.scrollTo({
+        left,
+        behavior: "smooth"
+      })
+    }
+    if (itemInfo.left > titleBox.value.offsetWidth - parseInt(getComputedStyle(titleItem.value[index], null).marginRight)) {
+      left = titleItem.value[index].offsetLeft - titleBox.value.offsetWidth + itemInfo.width + parseInt(getComputedStyle(titleItem.value[index], null).marginRight)
+      titleBox.value.scrollTo({
+        left,
+        behavior: "smooth"
+      })
+    }
   }
 }
 const newsSwiper = (swiperInstance: any) => {
