@@ -1,5 +1,5 @@
 <template>
-  <div class="vdo-info">
+  <div class="vdo-info" @click="goPage({name: 'videoDetail', params: {'videoId': videoInfo.vdoId}})">
     <div class="vdo-pre">
       <img :src="videoInfo.img" alt="">
       <span class="play-icon"></span>
@@ -15,6 +15,13 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { useRouter } from "vue-router";
+
+const $router = useRouter();
+const goPage = (params: any) => {
+  $router.push(params)
+}
+
 interface vdoType {
   author: string;
   iTime: string;

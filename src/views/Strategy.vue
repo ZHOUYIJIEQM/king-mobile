@@ -23,6 +23,8 @@
               <div 
                 class="hot-item"
                 v-for="(i, j) in slotProps.swiperItem.dataList"
+                :key="j"
+                @click="goPage({name: 'videoDetail', params: {'videoId': i.vdoId}})"
               >
                 <template v-if="j === 0">
                   <div class="img-box">
@@ -44,7 +46,7 @@
             </div>
           </template>
         </NavBannerVue>
-        <div class="bottom-txt" @click="toggleShowHot">{{!hotVdoAll ? '查看完整榜单' : '收起榜单'}}</div>
+        <div class="bottom-txt" @click="toggleShowHot">{{!hotVdoAll ? '收起榜单' : '查看完整榜单'}}</div>
       </div>
       <div class="cont-item hero-strategy">
         <div class="cont-title">英雄攻略</div>
@@ -66,15 +68,18 @@
               </div>
             </div>
             <div class="open-box">
-              <div class="open-innerbox" v-show="!isCollapse">
-                <HeroSelectVue 
-                  :heroData="heroList.data"
-                  @heroChange="heroChange"
-                ></HeroSelectVue>
-              </div>
+              <transition name="fade">
+                <!-- <div class="open-innerbox" :class="[!isCollapse ? 'zk' : 'sq']"> -->
+                <div class="open-innerbox" v-show="!isCollapse">
+                  <HeroSelectVue 
+                    :heroData="heroList.data"
+                    @heroChange="heroChange"
+                  ></HeroSelectVue>
+                </div>
+              </transition>
             </div>
           </div>
-          <div class="hero-info">
+          <div class="hero-info" @click="goPage({ name: 'heroDetail', params: {heroName} })">
             <span>{{heroName}}</span>
             <span>查看英雄详细介绍></span>
           </div>
@@ -91,6 +96,7 @@
               <div class="hero-data-article-item"
                 v-for="(item, index) in heroInfoData.data.article"
                 :key="index"
+                @click="goPage({name: 'articleDetail', params: {'articleId': item.newsId}})"
               >
                 <div class="left">
                 <!-- {{item}} -->
@@ -158,6 +164,12 @@ import VideoInfoVue from '../components/VideoInfo.vue';
 import HeroSelectVue from '../components/HeroSelect.vue';
 import { strategyStore } from "../store/strategy";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+
+const $router = useRouter();
+const goPage = (params: any) => {
+  $router.push(params)
+}
 
 const app: any = getCurrentInstance();
 const strategyReq = app.proxy.$StrategyReq;
@@ -210,7 +222,7 @@ const changeIndex = (activeIndex: activeNum, index: number, swiperEl: any) => {
 }
 
 // 是否完整榜单
-let hotVdoAll = ref<boolean>(true)
+let hotVdoAll = ref<boolean>(false)
 interface hotVdoType {
   name: string;
   dataList: []
@@ -223,7 +235,7 @@ const toggleShowHot = () => {
   let d = (allStrategy.data[0] as []).map((i: any) => {
     return {
       name: i.name,
-      dataList: hotVdoAll.value ? i.dataList.slice(0, 3) : i.dataList.slice(0, 10)
+      dataList: hotVdoAll.value ? i.dataList.slice(0, 10) : i.dataList.slice(0, 3)
     }
   })
   hotVdoData.data = d
@@ -355,12 +367,6 @@ onMounted(async () => {
     &.hot-vdo {
       min-height: 6.1333rem;
     }
-    &.hot-vdo {
-      .bottom-txt {
-        margin-top: 0;
-        border-top: 0px;
-      }
-    }
     .bottom-txt {
       font-size: .32rem;
       color: #757577;
@@ -402,6 +408,9 @@ onMounted(async () => {
         display: flex;
         padding: .24rem 0;
         border-bottom: 1px solid #eaedef;
+        &:last-child {
+          border-bottom: none;
+        }
         .img-box {
           width: 35%;
           img {

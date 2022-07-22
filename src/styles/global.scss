@@ -1,3 +1,7 @@
+html, body, #app {
+  height: 100%;
+}
+
 .loading-skeleton {
   background-color: #e3e3e3;
   position: relative;
@@ -27,17 +31,17 @@
   text-overflow: ellipsis;
 }
 .two-eli {
-  overflow:hidden;
-  text-overflow:ellipsis;
-  display:-webkit-box;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:2; // 2行
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; // 2行
 }
 
 .cont-item {
-  margin-top: .4rem;
+  margin-top: 0.4rem;
   background-color: #fff;
-  padding-bottom: .4rem;
+  padding-bottom: 0.4rem;
   &:last-child {
     border-bottom: none;
     margin-bottom: 0;
@@ -58,13 +62,50 @@
   }
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: all .3s;
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s;
 }
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 
+// .open-innerbox {
+//   transition: all .5s;
+//   overflow: hidden;
+// }
+// .zk {
+//   max-height: 7rem;
+//   opacity: 1;
+// }
+// .sq {
+//   max-height: 0px;
+//   opacity: 0;
+// }
+
 .toast-bottom {
   top: 80% !important;
+}
+
+.hero-list {
+  padding: 0 .4rem;
+  display: flex;
+  flex-wrap: wrap;
+  .hero-item {
+    width: 20%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: .2133rem;
+    img {
+      width: 80%;
+      aspect-ratio: 1;
+    }
+    p {
+      margin-top: .2133rem;
+      font-size: .32rem;
+    }
+  }
 }

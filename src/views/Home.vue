@@ -41,6 +41,7 @@
                     class="news-item" 
                     v-for="(i, j) in slotProps.swiperItem.dataList" 
                     :key="j"
+                    @click="goPage({name: 'articleDetail', params: {'articleId': i.iId}})"
                   >
                     <div class="flag" :style="{borderColor: borderColor.get(slotProps.swiperItem.name), color: borderColor.get(slotProps.swiperItem.name)}">{{slotProps.swiperItem.name}}</div>
                     <div class="text eli">{{i.title}}</div>
@@ -75,6 +76,7 @@
                       class="hero-item"
                       v-for="(i, j) in slotProps.swiperItem.dataList"
                       :key="j"
+                      @click="goPage({name: 'heroDetail', params: {heroName: i.name} })"
                     >
                       <img :src="i.avatar" alt="">
                       <p>{{i.name}}</p>
@@ -116,6 +118,12 @@ import BannerVue from "../components/Banner.vue";
 import NavBannerVue from "../components/NavBanner.vue";
 import VideoInfoVue from "../components/VideoInfo.vue";
 import KeepScrollVue from '../components/KeepScroll.vue'
+import { useRouter } from "vue-router";
+
+const $router = useRouter();
+const goPage = (params: any) => {
+  $router.push(params)
+}
 
 const app: any = getCurrentInstance();
 const homeReq = app.proxy.$HomeReq;
