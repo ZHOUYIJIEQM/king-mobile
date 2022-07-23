@@ -109,3 +109,22 @@ html, body, #app {
     }
   }
 }
+
+.navbar {
+  $pdt: 1.2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $pdt;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2f2f2f;
+  padding: 0 0.4rem;
+  z-index: 10;
+  span {
+    font-size: 0.3733rem;
+    color: #fff;
+  }
+}

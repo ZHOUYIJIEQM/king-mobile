@@ -43,13 +43,13 @@
           <template v-if="i === 1">
             <div class="section1">
               <div class="des-box">
-                <div class="btn1">
+                <div class="btn1" @click="app.proxy.$toast({msg: '暂无该功能!'})">
                   <img src="../assets/vdo.png" alt="">
                   <span>英雄介绍视频</span>
                 </div>
-                <div class="btn2">
+                <div class="btn2" @click="showBigPic(true)">
                   <img src="../assets/pic.png" alt="">
-                  <span @click="showBigPic(true)">一图识英雄</span>
+                  <span>一图识英雄</span>
                 </div>
               </div>
               <ul class="skills-icon-box">
@@ -214,7 +214,7 @@ let heroData = ref<any>({});
  */
 async function getHeroDetail(params: any) {
   let res = await app.proxy.$Resources.getResources(params);
-  console.log("英雄详情", res.data);
+  // console.log("英雄详情", res.data);
   return res.data;
 }
 
@@ -271,7 +271,6 @@ const showBigPic = (value: boolean) => {
 const showSkinsBanner = (value: boolean) => {
   skinsBanner.value = value
   if (value) {
-    console.log('=====');
     document.body.style.overflow = 'hidden'
   } else {
     document.body.style.overflow = ''
@@ -679,7 +678,8 @@ $pdt: 1.2rem;
     top: $pdt;
     overflow: auto;
     font-size: 0;
-    background-color: #fff;
+    background-color: #2f2f2f;
+    color: #fff;
     img {
       width: 100%;
     }
