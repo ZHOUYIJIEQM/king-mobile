@@ -58,7 +58,7 @@ onMounted(async () => {
     p {
       overflow: hidden;
     }
-    img {
+    iframe, video, img {
       width: auto;
       max-width: 100%;
       height: auto !important;

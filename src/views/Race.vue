@@ -28,21 +28,24 @@
           <div class="item-box" ref="itemBox" @scroll="handleScroll(index)">
             <div class="inner-box" ref="itemInnerBox">
               <div class="race-title">王者荣耀 {{title[index]}} <span>官方举办</span></div>
+              <img class="tagImg" v-if="imgList[index].length" :src="imgList[index]" alt="">
+              <div class="race-text" v-if="item?.dataList?.length">赛事资讯</div>
               <div
                 class="race-title-item"
                 v-for="(item1, index1) in item.dataList"
                 :key="index1"
+                @click="$router.push({name: 'articleDetail', params: {'articleId': item1.iId}})"
               >
                 <div class="article-name eli">{{item1.title}}</div>
                 <div class="article-time">{{item1.createdTime.split(' ').at(0).split('-').slice(1).join('/')}}</div>
               </div>
-              <div class="bottom-loading" v-if="bottomLoading">
+              <div class="bottom-loading" v-show="bottomLoading">
                 <p>正在加载中...</p>
               </div>
-              <div class="bottom-loading" v-if="finish.data[index]">
+              <div class="bottom-loading" v-show="finish.data[index]">
                 <p>已显示全部内容</p>
               </div>
-              <div class="loading-tip" v-if="loading">正在加载中...</div>
+              <div class="loading-tip" v-show="loading">正在加载中...</div>
               <div class="no-data" v-if="item.dataList && !item.dataList.length">暂无该分类数据!</div>
             </div>
           </div>
@@ -54,14 +57,27 @@
 <script lang="ts" setup>
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
-import { getCurrentInstance, nextTick, onMounted, reactive, ref } from 'vue';
+import { getCurrentInstance, nextTick, onActivated, onMounted, reactive, ref } from 'vue';
+import { onBeforeRouteLeave, useRouter } from "vue-router";
 const app: any = getCurrentInstance()
+const $router = useRouter()
 
 let title = ref([ "KPL", "挑战者杯", "全国大赛", "K甲联赛", "高校联赛", "TGA", "WGI", "模拟战大师赛" ])
 // 存放数据
 let raceArticle = reactive({ data: [] as any })
 // 存放请求参数
 let reqParam = reactive({ data: [] as any })
+let imgList = ref([
+  'https://game.gtimg.cn/images/yxzj/m/m201706/images/matchindex/kpl.jpg',
+  'https://game.gtimg.cn/images/yxzj/m/m201706/images/matchindex/kcc.jpg',
+  '',
+  'https://game.gtimg.cn/images/yxzj/m/m201706/images/matchindex/kgl.jpg',
+  '',
+  'https://game.gtimg.cn/images/yxzj/m/m201706/images/matchindex/tga.jpg',
+  'https://game.gtimg.cn/images/yxzj/m/m201706/images/matchindex/wgi.jpg',
+  'https://game.gtimg.cn/images/yxzj/m/m201706/images/matchindex/mnz.jpg'
+])
+let scrollTop = Array.from({length: title.value.length}, () => 0)
 
 let loading = ref<boolean>(true)
 let bottomLoading = ref<boolean>(false)
@@ -127,7 +143,6 @@ const slideChange = async () => {
  */
 const getRace = async (params: any) => {
   let res = await app.proxy.$Race.getRaceArticle(params)
-  console.log(res.data);
   return res.data
 }
 
@@ -158,13 +173,13 @@ const changeTitle = async (index: number) => {
   swiperEl.value.slideTo(index)
 }
 
+/**
+ * 处理滚动
+ */
 const handleScroll = async (index: number) => {
   if (!finish.data[index] && itemBox.value[index].offsetHeight + itemBox.value[index].scrollTop >= itemBox.value[index].scrollHeight - 30 && !bottomLoading.value) {
     bottomLoading.value = true
-    console.log('加载...');
-    // setTimeout(() => {
-    //   bottomLoading.value = false
-    // }, 2000)
+    // console.log('加载...');
     reqParam.data[activeIndex.value].pageNum += 1
     let data = await getRace(reqParam.data[activeIndex.value])
     raceArticle.data[activeIndex.value].dataList.push(...data.dataList)
@@ -188,6 +203,24 @@ onMounted(async () => {
   // console.log('结束标记', finish.data);
   await nextTick()
   slideChange()
+})
+
+let navTitleScrollLeft = 0
+
+onActivated(async () => {
+  await nextTick()
+  // 恢复滚动距离
+  navTitle.value.scrollLeft = navTitleScrollLeft
+  scrollTop.forEach((item, index) => {
+    itemBox.value[index].scrollTop = item
+  })
+})
+
+onBeforeRouteLeave(() => {
+  // 记录滚动距离
+  navTitleScrollLeft = Math.floor(navTitle.value.scrollLeft)
+  scrollTop = itemBox.value.map((item: any) => Math.floor(item.scrollTop)) 
+  // console.log(navTitleScrollLeft, scrollTop);
 })
 </script>
 <style lang="scss" scoped>
@@ -255,6 +288,16 @@ onMounted(async () => {
         color: #A2A2A2;
       }
     }
+    .tagImg {
+      margin: .32rem 0;
+      width: 100%;
+    }
+    .race-text {
+      text-align: center;
+      padding: .24rem 0;
+      color: #a2a2a2;
+      background: #e4e4e4;
+    }
     .item-box {
       height: 100%;
       overflow: auto;
@@ -281,7 +324,7 @@ onMounted(async () => {
       font-size: .48rem;
       text-align: center;
       color: #5e5e5e;
-      height: 13.3333rem;
+      height: 5.3333rem;
       display: flex;
       justify-content: center;
       align-items: center;
