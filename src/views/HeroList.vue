@@ -54,7 +54,7 @@ const mergeAll = (heroListData: []) => {
 onMounted(async () => {
   let heroListRes = await app.proxy.$HomeReq.getHeroList()
   heroList.value = mergeAll(heroListRes.data)
-  console.log(heroList.value);
+  // console.log(heroList.value);
 })
 
 </script>

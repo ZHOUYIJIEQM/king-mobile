@@ -242,7 +242,7 @@ const getShortNews = async () => {
   try {
     let res = await homeReq.getShortnews();
     if (res.status === 200) {
-      console.log('新闻资讯', res.data);
+      // console.log('新闻资讯', res.data);
       newsSwiper.data = res.data;
     }
   } catch (error) {

@@ -335,6 +335,7 @@ $pdt: 1.2rem;
     background-position: center;
     position: relative;
     .hero-title {
+      $delayTime: .3s;
       position: absolute;
       left: .4rem;
       right: .4rem;
@@ -344,12 +345,17 @@ $pdt: 1.2rem;
       &>p {
         line-height: 1.6;
       }
-      .hero-nick-name {
-        
+      .hero-nick-name, .hero-name, .hero-type, .diffi, .skill, .attack, .survive {
+        animation: txtshow .6s ease-out;
+        animation-fill-mode: both;
       }
       .hero-name {
         font-weight: bold;
         font-size: .4267rem;
+        animation-delay: calc($delayTime * 1);
+      }
+      .hero-type {
+        animation-delay: calc($delayTime * 2);
       }
       .hero-score {
         display: flex;
@@ -367,21 +373,25 @@ $pdt: 1.2rem;
           }
         }
         .diffi {
+          animation-delay: calc($delayTime * 3);
           &>span {
             background-color: #805300;
           }
         }
         .skill {
+          animation-delay: calc($delayTime * 4);
           &>span {
             background-color: #1f3695;
           }
         }
         .attack {
+          animation-delay: calc($delayTime * 5);
           &>span {
             background-color: #791a16;
           }
         }
         .survive {
+          animation-delay: calc($delayTime * 6);
           &>span {
             background-color: #33332c;
           }
