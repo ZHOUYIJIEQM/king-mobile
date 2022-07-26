@@ -45,7 +45,7 @@
                   >
                     <div class="flag" :style="{borderColor: borderColor.get(slotProps.swiperItem.name), color: borderColor.get(slotProps.swiperItem.name)}">{{slotProps.swiperItem.name}}</div>
                     <div class="text eli">{{i.title}}</div>
-                    <div class="date">{{formatDate(i.createTime)}}</div>
+                    <div class="date">{{formatDate(i.createdTime)}}</div>
                   </div>
                 </div>
               </template>
@@ -242,7 +242,7 @@ const getShortNews = async () => {
   try {
     let res = await homeReq.getShortnews();
     if (res.status === 200) {
-      // console.log('新闻资讯', res.data);
+      console.log('新闻资讯', res.data);
       newsSwiper.data = res.data;
     }
   } catch (error) {
@@ -334,12 +334,12 @@ const formatDate = (str:string):string => {
   return `${res[1]}/${res[2]}`
 }
 
-onMounted(() => {
-  getFirstSwiper();
-  getShortNews();
-  getHeroBanner();
-  getHeroList();
-  highlightVdo()
+onMounted(async () => {
+  await getFirstSwiper();
+  await getShortNews();
+  await getHeroBanner();
+  await getHeroList();
+  await highlightVdo()
 })
 
 // let activeIndex = ref<number>(0)

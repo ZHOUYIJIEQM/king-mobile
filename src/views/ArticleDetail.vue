@@ -8,10 +8,10 @@
         @click="$router.replace({name: 'HeroList'})"
       >更多英雄></span>
     </div>
-    <div class="article-nav eli" v-if="articleData.title">
+    <div class="detail-nav eli" v-if="articleData.title || articleData.name">
       <div class="back" @click="$router.go(-1)">&lt;</div>
-      <div class="title eli">{{articleData.title}}</div>
-      <div class="time">{{articleData.createTime.split(' ').at(0)}}</div>
+      <div class="title eli">{{articleData.title || articleData.name}}</div>
+      <div class="time">{{articleData.createdTime.split(' ').at(0)}}</div>
     </div>
     <div class="article-content" v-html="articleData.content"></div>
   </div>
@@ -30,10 +30,10 @@ const app: any = getCurrentInstance()
 
 let articleData = ref<any>({})
 async function getArticle(params: any) {
-  console.log(params);
+  // console.log(params);
   let res = await app.proxy.$Resources.getResources(params)
   articleData.value = res.data
-  console.log('文章详情', articleData.value);
+  // console.log('文章详情', articleData.value);
 }
 
 onMounted(async () => {
@@ -44,27 +44,7 @@ onMounted(async () => {
 .article-detail-page {
   padding-top: calc(1.2rem + 1.0933rem);
 
-  .article-nav {
-    background-color: #fff;
-    position: fixed;
-    width: 100%;
-    top: 1.2rem;
-    left: 0;
-    font-size: .4267rem;
-    border-bottom: 1px solid #d4d4d5;
-    padding: .32rem .32rem;
-    display: flex;
-    align-items: center;
-    .back {
-      font-weight: bold;
-      color: #4394e4;
-      padding-right: .32rem;
-    }
-    .title {
-      font-weight: bold;
-      flex: 1;
-      color: #4394e4;
-    }
+  .detail-nav {
     .time {
       font-size: .32rem;
       padding-left: .24rem;
@@ -73,6 +53,8 @@ onMounted(async () => {
 
   :deep(.article-content) {
     padding: .32rem;
+    font-size: 16px;
+    line-height: 1.4;
     p {
       overflow: hidden;
     }

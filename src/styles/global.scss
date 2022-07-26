@@ -128,3 +128,41 @@ html, body, #app {
     color: #fff;
   }
 }
+
+.play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: url('../assets/spr.png') no-repeat;
+  background-size: 2.5rem;
+  width: 1.3333rem;
+  aspect-ratio: 1;
+  display: inline-block;
+  background-position: -0.48rem -1.0133rem;
+}
+
+.detail-nav {
+  background-color: #fff;
+  position: fixed;
+  width: 100%;
+  top: 1.2rem;
+  left: 0;
+  font-size: .4267rem;
+  border-bottom: 1px solid #d4d4d5;
+  padding: .32rem .32rem;
+  display: flex;
+  align-items: center;
+  z-index: 999;
+  .back {
+    font-weight: bold;
+    color: #4394e4;
+    padding-right: .32rem;
+  }
+  .title {
+    line-height: 1.3;
+    font-weight: bold;
+    flex: 1;
+    color: #4394e4;
+  }
+}

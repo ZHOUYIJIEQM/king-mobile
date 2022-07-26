@@ -122,7 +122,7 @@
                     :key="index"
                   >
                     <img :src="item.icon" alt="">
-                    <p>{{item.name}}</p>
+                    <p class="eli">{{item.name}}</p>
                   </div>
                 </div>
               </div>
@@ -199,13 +199,23 @@ export default {
 </script>
 <script lang="ts" setup>
 
-import { computed, getCurrentInstance, onActivated, onMounted, ref } from "vue";
+import { computed, getCurrentInstance, onActivated, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import HeroSkins from '../components/HeroSkins.vue'
+import router from "../router";
 
 const $router = useRouter()
 const $route = useRoute();
 const app: any = getCurrentInstance();
+
+watch(
+  () => $route.name, 
+  (newV) => {
+    document.body.style.overflow = ''
+    // console.log('路由变了', newV);
+  }, 
+  { deep: true }
+)
 
 // 英雄详情
 let heroData = ref<any>({});
@@ -574,7 +584,7 @@ $pdt: 1.2rem;
               padding-bottom: .24rem;
               border-bottom: 1px solid #d4d9de;
               .equipment-item {
-                // flex: 1;
+                flex: 1;
                 display: flex;
                 flex-direction: column;
                 align-items: center;

@@ -11,9 +11,10 @@
       class="slide-item" 
       v-for="(item, index) in swiperData" :key="index"
     >
-      <a :href="item.url" class="img-box">
+      <!-- :href="item.url" -->
+      <div class="img-box">
         <img :src="item.img" alt="">
-      </a>
+      </div>
     </swiper-slide>
   </swiper>
   <div class="banner-loading loading-skeleton" v-else></div>
@@ -59,6 +60,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .mySwiper {
+  min-height: 2.6667rem;
   height: 100%;
   font-size: 0;
   .slide-item {
@@ -87,6 +89,6 @@ export default {
   }
 }
 .banner-loading {
-  min-height: 4.2667rem;
+  min-height: 4.24rem;
 }
 </style>

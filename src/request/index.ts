@@ -1,6 +1,7 @@
 import HomeReq from './home'
 import StrategyReq from './strategy'
 import Resources from './resource'
+import Race from './race'
 
 export default {
   install(app: any) {
@@ -8,5 +9,6 @@ export default {
     app.config.globalProperties.$HomeReq = HomeReq
     app.config.globalProperties.$StrategyReq = StrategyReq
     app.config.globalProperties.$Resources = Resources
+    app.config.globalProperties.$Race = Race
   }
 };

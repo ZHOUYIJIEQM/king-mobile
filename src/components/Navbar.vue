@@ -11,11 +11,24 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const router = useRouter()
 const route = useRoute()
+
+watch(
+  () => route.name, 
+  (newV) => {
+    let l = ['home', 'strategy', 'race']
+    let index = l.findIndex(i => i === newV)
+    // console.log('路由变了', newV);
+    if (index !== -1) {
+      activeIndex.value = index
+    }
+  },
+  {deep: true}
+)
 
 interface NavBar {
   title: string,

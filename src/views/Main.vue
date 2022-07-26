@@ -24,5 +24,6 @@ import NavbarVue from '../components/Navbar.vue';
 .main-content {
   $navHeight: 1.12rem;
   padding-top: $navHeight;
+  height: 100%;
 }
 </style>

@@ -35,6 +35,8 @@ defineExpose({
 </script>
 <style scoped lang="scss">
 .toast-text {
+  width: fit-content;
+  max-width: 86%;
   z-index: 9999;
   font-size: 0.3733rem;
   position: fixed;
