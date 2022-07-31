@@ -53,8 +53,12 @@ onMounted(async () => {
 
   :deep(.article-content) {
     padding: .32rem;
-    font-size: 16px;
+    font-size: 16px !important;
     line-height: 1.4;
+    span {
+      font-size: 14px !important;
+      line-height: 1.3;
+    }
     p {
       overflow: hidden;
     }
