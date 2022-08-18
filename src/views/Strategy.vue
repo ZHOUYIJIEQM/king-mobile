@@ -96,7 +96,7 @@
               <div class="hero-data-article-item"
                 v-for="(item, index) in heroInfoData.data.article"
                 :key="index"
-                @click="goPage({name: 'articleDetail', params: {'articleId': item.newsId}})"
+                @click="goPage({name: 'articleDetail', params: {'articleId': item._id}})"
               >
                 <div class="left">
                 <!-- {{item}} -->
@@ -168,6 +168,7 @@ import { useRouter } from "vue-router";
 
 const $router = useRouter();
 const goPage = (params: any) => {
+  console.log('跳转', params);
   $router.push(params)
 }
 

@@ -41,7 +41,7 @@
                     class="news-item" 
                     v-for="(i, j) in slotProps.swiperItem.dataList" 
                     :key="j"
-                    @click="goPage({name: 'articleDetail', params: {'articleId': i.iId}})"
+                    @click="goPage({name: 'articleDetail', params: {'articleId': i._id}})"
                   >
                     <div class="flag" :style="{borderColor: borderColor.get(slotProps.swiperItem.name), color: borderColor.get(slotProps.swiperItem.name)}">{{slotProps.swiperItem.name}}</div>
                     <div class="text eli">{{i.title}}</div>

@@ -34,7 +34,7 @@
                 class="race-title-item"
                 v-for="(item1, index1) in item.dataList"
                 :key="index1"
-                @click="$router.push({name: 'articleDetail', params: {'articleId': item1.iId}})"
+                @click="$router.push({name: 'articleDetail', params: {'articleId': item1._id}})"
               >
                 <div class="article-name eli">{{item1.title}}</div>
                 <div class="article-time">{{item1.createdTime.split(' ').at(0).split('-').slice(1).join('/')}}</div>

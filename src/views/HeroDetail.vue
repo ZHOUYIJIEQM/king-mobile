@@ -479,9 +479,11 @@ $pdt: 1.2rem;
               font-size: 0;
               position: relative;
               border: .1067rem solid transparent;
+              max-width: 25%;
               img {
                 width: 100%;
                 aspect-ratio: 1;
+                border-radius: 50%;
               }
               &.active {
                 border: .1067rem solid #e1a840;
@@ -548,6 +550,7 @@ $pdt: 1.2rem;
                 img {
                   width: 1.6rem;
                   aspect-ratio: 1;
+                  border-radius: 50%;
                 }
               }
             }
