@@ -158,25 +158,25 @@ strategyStore().changeHeroName('鲁班七号')
 ### 9. 根据后台管理系统里的分类列表, 分出多块区域
 
 ## <a id="图片预览">图片预览</a>
-<div>
-  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/首页.jpg" alt="首页.jpg">
-  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/攻略中心.jpg" alt="攻略中心.jpg">
-</div>
-<div>
-  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/赛事中心.jpg" alt="赛事中心.jpg">
-  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/英雄详情页.jpg" alt="英雄详情页.jpg">
-</div>
-<div>
-  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/皮肤轮播.jpg" alt="皮肤轮播.jpg">
-  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/一图识英雄.jpg" alt="一图识英雄.jpg">
-</div>
-<div>
-  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/更多英雄.jpg" alt="更多英雄.jpg">
-  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/视频页.jpg" alt="视频页.jpg">
-</div>
-<div>
-  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/文章页.jpg" alt="文章页.jpg">
-</div>
+<!-- ![首页](./prevImg/%E9%A6%96%E9%A1%B5.jpg)
+![攻略中心](./prevImg/%E6%94%BB%E7%95%A5%E4%B8%AD%E5%BF%83.jpg)
+![赛事中心](./prevImg/%E8%B5%9B%E4%BA%8B%E4%B8%AD%E5%BF%83.jpg)
+![英雄详情页](./prevImg/%E8%8B%B1%E9%9B%84%E8%AF%A6%E6%83%85%E9%A1%B5.jpg)
+![皮肤](./prevImg/%E7%9A%AE%E8%82%A4%E8%BD%AE%E6%92%AD.jpg)
+![一图识英雄](./prevImg/%E4%B8%80%E5%9B%BE%E8%AF%86%E8%8B%B1%E9%9B%84.jpg)
+![更多英雄](./prevImg/%E6%9B%B4%E5%A4%9A%E8%8B%B1%E9%9B%84.jpg)
+![视频页](./prevImg/%E8%A7%86%E9%A2%91%E9%A1%B5.jpg)
+![文章页](./prevImg/%E6%96%87%E7%AB%A0%E9%A1%B5.jpg) -->
+
+<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/首页.jpg" alt="首页.jpg">
+<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/攻略中心.jpg" alt="攻略中心.jpg">
+<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/赛事中心.jpg" alt="赛事中心.jpg">
+<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/英雄详情页.jpg" alt="英雄详情页.jpg">
+<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/皮肤轮播.jpg" alt="皮肤轮播.jpg">
+<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/一图识英雄.jpg" alt="一图识英雄.jpg">
+<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/更多英雄.jpg" alt="更多英雄.jpg">
+<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/视频页.jpg" alt="视频页.jpg">
+<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/文章页.jpg" alt="文章页.jpg">
 
 # Vue 3 + TypeScript + Vite
 
