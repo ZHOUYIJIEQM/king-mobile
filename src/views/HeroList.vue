@@ -30,8 +30,8 @@ const $router = useRouter()
  * 合并出全部
  */
 const mergeAll = (heroListData: []) => {
-  let all = {name: '全部', dataList: []}
-  let res = []
+  let all: any = {name: '全部', dataList: []}
+  let res: any = []
   heroListData.forEach((item: any) => {
     if(item.name !== '热门') {
       item.dataList.forEach((hero: any) => {
@@ -61,7 +61,7 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .more-hero {
   height: 100%;
-  padding-top: 1.3333rem;
+  padding-top: 1.3333rem; 
   :deep(.nav-banner-box) {
     .title-box {
       position: fixed;

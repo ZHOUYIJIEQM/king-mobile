@@ -98,19 +98,19 @@ const slideChange = async () => {
 
   // 让导航标识居中
   let activeItemEl = titleItem.value[index]
-  let rectInfo = activeItemEl.getBoundingClientRect()
+  // let rectInfo = activeItemEl.getBoundingClientRect()
   let navTitleWidth = navTitle.value.offsetWidth
-  if (rectInfo.left <= 0) {
-    navTitle.value.scrollTo({
-      left: navTitle.value.scrollLeft - navTitleWidth / 2 - activeItemEl.offsetLeft, 
-      top: 0,
-      behavior: 'smooth'
-    })
-  }
+  // if (rectInfo.left <= 0) {
+  //   navTitle.value.scrollTo({
+  //     left: navTitle.value.scrollLeft - navTitleWidth / 2 - activeItemEl.offsetLeft, 
+  //     top: 0,
+  //     behavior: 'smooth'
+  //   })
+  // }
   if (activeItemEl.offsetLeft > navTitleWidth / 2) {
     // console.log('超过一半', navTitleWidth / 2 - activeItemEl.offsetLeft);
     navTitle.value.scrollTo({
-      left: activeItemEl.offsetLeft - navTitleWidth / 2 + rectInfo.width / 2, 
+      left: activeItemEl.offsetLeft - navTitleWidth / 2 + activeItemEl.offsetWidth / 2, 
       top: 0,
       behavior: 'smooth'
     })
