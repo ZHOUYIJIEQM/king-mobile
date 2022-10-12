@@ -159,19 +159,23 @@ strategyStore().changeHeroName('鲁班七号')
 
 ## <a id="图片预览">图片预览</a>
 <div>
-  <img style="vertical-align: top; width: 300px; margin: 20px 20px 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/首页.jpg" alt="首页.jpg">
-  <img style="vertical-align: top; width: 300px; margin: 20px 20px 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/攻略中心.jpg" alt="攻略中心.jpg">
-  <img style="vertical-align: top; width: 300px; margin: 20px 20px 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/赛事中心.jpg" alt="赛事中心.jpg">
+  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/首页.jpg" alt="首页.jpg">
+  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/攻略中心.jpg" alt="攻略中心.jpg">
 </div>
 <div>
-  <img style="vertical-align: top; width: 300px; margin: 20px 20px 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/英雄详情页.jpg" alt="英雄详情页.jpg">
-  <img style="vertical-align: top; width: 300px; margin: 20px 20px 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/皮肤轮播.jpg" alt="皮肤轮播.jpg">
-  <img style="vertical-align: top; width: 300px; margin: 20px 20px 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/一图识英雄.jpg" alt="一图识英雄.jpg">
+  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/赛事中心.jpg" alt="赛事中心.jpg">
+  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/英雄详情页.jpg" alt="英雄详情页.jpg">
 </div>
 <div>
-  <img style="vertical-align: top; width: 300px; margin: 20px 20px 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/更多英雄.jpg" alt="更多英雄.jpg">
-  <img style="vertical-align: top; width: 300px; margin: 20px 20px 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/视频页.jpg" alt="视频页.jpg">
-  <img style="vertical-align: top; width: 300px; margin: 20px 20px 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/文章页.jpg" alt="文章页.jpg">
+  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/皮肤轮播.jpg" alt="皮肤轮播.jpg">
+  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/一图识英雄.jpg" alt="一图识英雄.jpg">
+</div>
+<div>
+  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/更多英雄.jpg" alt="更多英雄.jpg">
+  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/视频页.jpg" alt="视频页.jpg">
+</div>
+<div>
+  <img style="vertical-align: top; width: 40%; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/文章页.jpg" alt="文章页.jpg">
 </div>
 
 # Vue 3 + TypeScript + Vite
