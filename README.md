@@ -168,15 +168,24 @@ strategyStore().changeHeroName('鲁班七号')
 ![视频页](./prevImg/%E8%A7%86%E9%A2%91%E9%A1%B5.jpg)
 ![文章页](./prevImg/%E6%96%87%E7%AB%A0%E9%A1%B5.jpg) -->
 
-<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/首页.jpg" alt="首页.jpg">
-<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/攻略中心.jpg" alt="攻略中心.jpg">
-<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/赛事中心.jpg" alt="赛事中心.jpg">
-<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/英雄详情页.jpg" alt="英雄详情页.jpg">
-<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/皮肤轮播.jpg" alt="皮肤轮播.jpg">
-<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/一图识英雄.jpg" alt="一图识英雄.jpg">
-<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/更多英雄.jpg" alt="更多英雄.jpg">
-<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/视频页.jpg" alt="视频页.jpg">
-<img style="display: block; width: 300px; margin: 20px 2% 0 0; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/文章页.jpg" alt="文章页.jpg">
+1 首页
+<img style="display: block; width: 300px; margin: 10px 0 30px; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/首页.jpg" alt="首页.jpg">
+2 攻略中心
+<img style="display: block; width: 300px; margin: 10px 0 30px; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/攻略中心.jpg" alt="攻略中心.jpg">
+3 赛事中心
+<img style="display: block; width: 300px; margin: 10px 0 30px; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/赛事中心.jpg" alt="赛事中心.jpg">
+4 英雄详情页
+<img style="display: block; width: 300px; margin: 10px 0 30px; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/英雄详情页.jpg" alt="英雄详情页.jpg">
+5 皮肤轮播
+<img style="display: block; width: 300px; margin: 10px 0 30px; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/皮肤轮播.jpg" alt="皮肤轮播.jpg">
+6 一图识英雄
+<img style="display: block; width: 300px; margin: 10px 0 30px; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/一图识英雄.jpg" alt="一图识英雄.jpg">
+7 更多英雄
+<img style="display: block; width: 300px; margin: 10px 0 30px; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/更多英雄.jpg" alt="更多英雄.jpg">
+8 视频页
+<img style="display: block; width: 300px; margin: 10px 0 30px; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/视频页.jpg" alt="视频页.jpg">
+9 文章页
+<img style="display: block; width: 300px; margin: 10px 0 30px; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/文章页.jpg" alt="文章页.jpg">
 
 # Vue 3 + TypeScript + Vite
 
