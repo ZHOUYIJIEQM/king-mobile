@@ -12,7 +12,7 @@
       v-for="(item, index) in swiperData"
       :key="index"
     >
-      <slot :slideItem="item"></slot>
+      <slot :slideItem="item" :index="index"></slot>
     </swiper-slide>
   </swiper>
   <div class="banner-loading loading-skeleton" v-else></div>
@@ -26,7 +26,7 @@ import { Autoplay, Pagination } from "swiper";
 const props = withDefaults(
   defineProps<{
     swiperData: any[];
-    modules: any[];
+    modules?: any[];
     autoPlay?: any;
     pagination?: any;
     loop?: boolean;

@@ -183,7 +183,30 @@
     </transition>
     <transition name="fade">
       <div class="skins-banner" v-show="skinsBanner">
-        <HeroSkins :swiperData="heroData.skins"></HeroSkins>
+        <Banner
+          :swiperData="heroData.skins"
+          :loop="true"
+        >
+          <template #default="props">
+            <div class="img-box">
+              <img :src="props.slideItem.img" alt="" />
+              <img style="transform: rotateX(180deg);" :src="props.slideItem.img" alt="" />
+              <div 
+                class="page" 
+                style="
+                  position: fixed;
+                  bottom: 8px;
+                  right: 8px;
+                  color: #fff;
+                  font-size: 12px;
+                  font-weight: bold;
+                "
+              >
+              {{ props.index + 1 }}/{{ heroData.skins.length }} {{ props.slideItem.name }}
+              </div>
+            </div>
+          </template>
+        </Banner>
         <span class="close-icon" @click="showSkinsBanner(false)"></span>
       </div>
     </transition>
