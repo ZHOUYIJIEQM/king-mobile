@@ -194,7 +194,7 @@
               <div 
                 class="page" 
                 style="
-                  position: fixed;
+                  position: absolute;
                   bottom: 8px;
                   right: 8px;
                   color: #fff;
