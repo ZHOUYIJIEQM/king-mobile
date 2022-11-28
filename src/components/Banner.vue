@@ -1,86 +1,82 @@
 <template>
-  <swiper 
+  <swiper
+    class="banner"
     v-if="swiperData.length"
-    class="mySwiper"
-    :autoplay="autoPlay" 
-    :pagination="pagination" 
+    :autoplay="autoPlay"
+    :pagination="pagination"
     :loop="true"
-    :modules="modules"
+    :modules="modulesObj"
   >
-    <swiper-slide 
-      class="slide-item" 
-      v-for="(item, index) in swiperData" :key="index"
+    <swiper-slide
+      class="slide-item"
+      v-for="(item, index) in swiperData"
+      :key="index"
     >
-      <!-- :href="item.url" -->
-      <div class="img-box">
-        <img :src="item.img" alt="">
-      </div>
+      <slot :slideItem="item"></slot>
     </swiper-slide>
   </swiper>
   <div class="banner-loading loading-skeleton" v-else></div>
 </template>
-<script lang="ts">
-// Import Swiper Vue.js components
+<script lang="ts" setup>
 import { Swiper, SwiperSlide } from "swiper/vue";
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
-// import required modules
 import { Autoplay, Pagination } from "swiper";
 
-export default {
-  components: {
-    Swiper,
-    SwiperSlide,
-  },
-  props: {
-    swiperData: {
-      type: Array,
-      required: true,
-      default: () => []
-    },
-  },
-  setup() {
-    return {
-      modules: [Pagination, Autoplay],
-      autoPlay: {
-        delay: 3000,
-        disableOnInteraction: false,
-      },
-      pagination: {
-        clickable: true,
-        // renderBullet: function (index, className) {
-        //   // return '<span class="' + className + '">' + (index + 1) + "</span>";
-        //   return '<span class="' + className + '">' + "</span>";
-        // },
-      },
-    };
-  },
+const props = withDefaults(
+  defineProps<{
+    swiperData: any[];
+    modules: any[];
+    autoPlay?: any;
+    pagination?: any;
+    loop?: boolean;
+  }>(),
+  {
+    swiperData: () => [],
+    autoPlay: () => ({ delay: 3000, disableOnInteraction: false }),
+    pagination: () => ({ clickable: true }),
+    modules: () => [],
+    loop: false,
+  }
+);
+const swiperMap: any = {
+  Autoplay: Autoplay,
+  Pagination: Pagination,
 };
+let modulesObj = computed<any[]>(() => {
+  if (props.modules.length) {
+    return props.modules.map((i) => swiperMap[i]);
+  }
+  return [];
+});
 </script>
 <style lang="scss" scoped>
-.mySwiper {
+.banner {
   min-height: 2.6667rem;
   height: 100%;
   font-size: 0;
+
   .slide-item {
     height: 100%;
-    img {
-      width: 100%;
-      height: 100%;
+
+    .img-box {
+      display: inline-block;
+      img {
+        width: 100%;
+      }
     }
   }
 
   :deep(.swiper-pagination) {
     text-align: right;
-    padding-right: .2667rem;
+    padding-right: 0.2667rem;
 
     .swiper-pagination-bullet {
       border-radius: 2px;
       background-color: #fff;
       opacity: 1;
-      width: .24rem;
-      height: .24rem;
+      width: 0.24rem;
+      height: 0.24rem;
 
       &-active {
         background-color: #4b67af;
@@ -88,6 +84,7 @@ export default {
     }
   }
 }
+
 .banner-loading {
   min-height: 4.24rem;
 }

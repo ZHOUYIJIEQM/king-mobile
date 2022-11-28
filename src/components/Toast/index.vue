@@ -1,42 +1,22 @@
 <template>
-  <transition name="fade">
-    <div class="toast-text" v-if="visible" :class="toastObj.className">
-      {{ toastObj.msg }}
-    </div>
-  </transition>
+  <div class="global-toast" :class="className">
+    {{ msg }}
+  </div>
 </template>
-
-<script setup lang="ts">
-import { reactive, ref } from "vue";
-import type { ToastType } from "../../models/toast";
-
-let timer: any = null
-const visible = ref<boolean>(false);
-const toastObj: ToastType = reactive({ msg: "" });
-
-/**
- * 提示
- */
-const ToastShow = (params: ToastType) => {
-  const { msg, duration = 2000, className = "" } = params;
-  toastObj.msg = msg;
-  toastObj.className = className;
-  visible.value = true;
-  clearTimeout(timer)
-  timer = setTimeout(() => {
-    visible.value = false;
-    toastObj.msg = "";
-  }, duration);
-};
-
-defineExpose({
-  ToastShow,
-});
+<script lang="ts" setup>
+interface toastType {
+  msg: string;
+  className?: string | string[]
+}
+const props = withDefaults(defineProps<toastType>(), {
+  msg: '',
+  className: ''
+})
 </script>
-<style scoped lang="scss">
-.toast-text {
-  width: fit-content;
-  max-width: 86%;
+<style lang="scss" scoped>
+.global-toast {
+  width: max-content;
+  max-width: 75%;
   z-index: 9999;
   font-size: 0.3733rem;
   position: fixed;
@@ -47,5 +27,34 @@ defineExpose({
   border-radius: 0.16rem;
   color: #fff;
   padding: 0.24rem 0.4rem;
+  box-shadow: 0px 2px 6px black;
+
+  &.show {
+    animation: fadeIn .5s;
+  }
+
+  &.hide {
+    animation: fadeOut .5s both;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 </style>

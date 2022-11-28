@@ -1,19 +1,15 @@
 <template>
   <div class="hero-detail-page" v-if="heroData.name">
     <div class="navbar">
-      <span @click="$router.push({name: 'home'})">王者荣耀</span>
+      <span @click="router.push({name: 'home'})">王者荣耀</span>
       <!-- todo: 跳转到英雄列表 -->
-      <span 
-        style="font-size: 12px;"
-        @click="$router.replace({name: 'HeroList'})"
-      >更多英雄></span>
+      <span style="font-size: 12px;" @click="router.replace({name: 'HeroList'})">更多英雄></span>
     </div>
-    <div class="hero-top" @click="showSkinsBanner(true)" :style="{ backgroundImage: 'linear-gradient(transparent 45%, rgb(0 0 0 / 90%)), url('+heroData.banner+')' }">
-      <!-- <img :src="heroData.banner" alt="" class="hero-banner" /> -->
+    <div class="hero-top" @click="showSkinsBanner(true)" :style="{ backgroundImage: 'linear-gradient(transparent 45%, rgb(0 0 0 / 90%)), url('+heroData.backgroundImg+')' }">
       <div class="hero-title">
         <p class="hero-nick-name">{{ heroData.skins[0].name }}</p>
         <p class="hero-name">{{ heroData.name }}</p>
-        <p class="hero-type">{{ heroCate }}</p>
+        <p class="hero-type">{{ heroData.category.join(' / ') }}</p>
         <p class="hero-score">
           <span class="diffi">难度<span class="score-num">{{ heroData.scores.difficulty }}</span></span>
           <span class="skill">技能<span class="score-num">{{ heroData.scores.skill }}</span></span>
@@ -72,6 +68,7 @@
                     {{item.name}} <span>{{item.delay}}</span>
                   </div>
                   <div class="desc">{{item.desc}}</div>
+                  <div style="margin-top: 0.1rem; line-height: 1.5;">{{item.tips}}</div>
                 </li>
               </ul>
             </div>
@@ -106,7 +103,7 @@
                 <div class="equipment-title">顺风出装</div>
                 <div class="equipment-list">
                   <div class="equipment-item"
-                    v-for="(item, index) in heroData.downWindEquipment"
+                    v-for="(item, index) in heroData.equipment.downWind"
                     :key="index"
                   >
                     <img :src="item.icon" alt="">
@@ -118,7 +115,7 @@
                 <div class="equipment-title upWind">逆风出装</div>
                 <div class="equipment-list">
                   <div class="equipment-item"
-                    v-for="(item, index) in heroData.upWindEquipment"
+                    v-for="(item, index) in heroData.equipment.upWind"
                     :key="index"
                   >
                     <img :src="item.icon" alt="">
@@ -131,7 +128,7 @@
               <div class="title">铭文推荐</div>
               <div class="inscription-box">
                 <div class="inscription-item"
-                  v-for="(item, index) in heroData.InscriptionId"
+                  v-for="(item, index) in heroData.inscriptionId"
                   :key="index"
                 >
                   <img :src="item.img" alt="">
@@ -162,11 +159,11 @@
                 <div class="relation-title">{{item.title}}</div>
                 <div 
                   class="relation-info"
-                  v-for="(i, j) in item.hero"
-                  :key="j"
+                  v-for="(item1, index1) in item.relation"
+                  :key="index1"
                 >
-                  <img :src="i.icon" alt="">
-                  <div class="info-des">{{i.content}}</div>
+                  <img :src="item1.hero.avatar" alt="">
+                  <div class="info-des">{{item1.content}}</div>
                 </div>
               </div>
             </div>
@@ -191,6 +188,7 @@
       </div>
     </transition>
   </div>
+  <div class="loading-bg loading-skeleton" v-else></div>
 </template>
 <script lang="ts">
 export default {
@@ -198,86 +196,23 @@ export default {
 };
 </script>
 <script lang="ts" setup>
+import resApi from '@/api/resource';
 
-import { computed, getCurrentInstance, onActivated, onMounted, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import HeroSkins from '../components/HeroSkins.vue'
-import router from "../router";
-
-const $router = useRouter()
-const $route = useRoute();
-const app: any = getCurrentInstance();
-
-watch(
-  () => $route.name, 
-  (newV) => {
-    document.body.style.overflow = ''
-    // console.log('路由变了', newV);
-  }, 
-  { deep: true }
-)
-
+const app: any = getCurrentInstance()
+const router = useRouter()
+const route = useRoute()
 // 英雄详情
-let heroData = ref<any>({});
-/**
- * 获取英雄详情
- */
-async function getHeroDetail(params: any) {
-  let res = await app.proxy.$Resources.getResources(params);
-  // console.log("英雄详情", res.data);
-  return res.data;
-}
-
-/**
- * 英雄分类
- */
-const heroCate = computed(() => {
-  return heroData.value.cate.map((i: any) => i.name).join(" / ");
-});
-
-/**
- * 升级技能名称
- */
-const setLevelUp = () => {
-  heroData.value.levelUp.forEach((item: any, index: number) => {
-    heroData.value.levelUp[index].name = heroData.value.skills.find((item2: any) => {
-      return item2.id === item.id
-    }).name
-  });
-}
-
-/**
- * 装备修正顺序
- */
-const sortEquipment = (equipmentIdList: any, equipmentList: any) => {
-  let res: any = []
-  equipmentIdList.forEach((i: any) => {
-    let index = equipmentList.findIndex((item: any) => {
-      return item.itemId === i
-    })
-    if (index !== -1) {
-      res.push({
-        icon: equipmentList[index].icon,
-        name: equipmentList[index].name,
-      })
-    }
-  })
-  return res
-}
-
+const heroData = ref<any>({});
+// 是否打开了大图
 const bigPic = ref<boolean>(false)
+// 是否打开了皮肤轮播
 const skinsBanner = ref<boolean>(false)
-/**
- * 一图识英雄
- */
-const showBigPic = (value: boolean) => {
-  bigPic.value = value
-  if (value) {
-    document.body.style.overflow = 'hidden'
-  } else {
-    document.body.style.overflow = ''
-  }
-}
+// '英雄初识', '进阶攻略' 活动标记
+const tagActiveIndex = ref<number>(0)
+// 选中的技能标记
+const skillActiveIndex = ref<number>(0)
+
+// 打开皮肤轮播
 const showSkinsBanner = (value: boolean) => {
   skinsBanner.value = value
   if (value) {
@@ -286,21 +221,29 @@ const showSkinsBanner = (value: boolean) => {
     document.body.style.overflow = ''
   }
 }
+// 打开一图识英雄
+const showBigPic = (value: boolean) => {
+  bigPic.value = value
+  if (value) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+}
 
-
-let tagActiveIndex = ref<number>(0)
-let skillActiveIndex = ref<number>(0)
+watch(
+  () => route.name, 
+  (newV) => {
+    document.body.style.overflow = ''
+  }, 
+  { deep: true }
+)
 
 onMounted(async () => {
-  let data = await getHeroDetail(
-    Object.assign({ name: $route.params.heroName }, { type: "hero" })
-  );
-  heroData.value = data;
-  setLevelUp()
-  heroData.value.upWindEquipment = sortEquipment(heroData.value.upWind.equipment, heroData.value.upWindEquipment)
-  heroData.value.downWindEquipment = sortEquipment(heroData.value.downWind.equipment, heroData.value.downWindEquipment)
+  let res = await resApi.getResources(Object.assign({ name: String(route.params.heroName)}, { type: "hero" }));
+  heroData.value = res.data;
+  console.log(heroData.value);
 });
-
 
 </script>
 <style lang="scss" scoped>

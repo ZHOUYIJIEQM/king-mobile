@@ -1,94 +1,250 @@
-# ```Vue3```仿王者荣耀移动端官网
+# ```Vue3```模仿王者荣耀移动端官网
 基于```Vue3+TypeScript+Vite+Vue-Router+Axios+Pinia```开发, 项目还包含了[后台管理系统](https://github.com/ZHOUYIJIEQM/king-admin), [node+express后端](https://github.com/ZHOUYIJIEQM/king-server)
 
 ## [点击查看效果, f12后切换到移动端浏览](https://app.yjsjyb.top/kingm)
 
 ## <a href="#图片预览">点击预览图片</a>
 
-## 一些记录
 
-### 1. 使用 ```flexible```, 在移动端实现```rem```等比例缩放布局
+## 配置自动导入
+```bash
+yarn add -D unplugin-auto-import unplugin-vue-components
 ```
-1. 安装
-yarn add amfe-flexible
-2. 引入
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-<script src="./node_modules/amfe-flexible/index.js"></script>
-3. 但这样项目打包时的index.html, 没有提取出来, 而是包含
-<script src="./node_modules/amfe-flexible/index.js"></script>
-没有把amfe-flexible打包出来, 所有直接把"./node_modules/amfe-flexible/index.js"放到一个单独的文件, 然后在main.js里引入
-4. 使用时可以在 vscode 下载扩展 px to rem, 打开设置搜索 cssrem, Cssrem: Root Font Size -> 在下方 input 输入设计稿的宽度/10(比如设计稿750, 就输入75), 接下来输入12px, 就会弹出提示转换为rem的对应值
-```
-
-### 2. ```Vue3+ts``` 组件传参的写法
-1. 写法一
 ```ts
+// vite.config.ts
+import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
+// https://github.com/antfu/unplugin-vue-components
+import Components from 'unplugin-vue-components/vite'
+// https://github.com/antfu/unplugin-auto-import
+import AutoImport from 'unplugin-auto-import/vite'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    vue(), 
+    vueJsx(),
+    Components({ /* options */ }),
+    AutoImport({
+      imports: ['vue', 'vue-router']
+    }),
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  },
+  server: {			
+    // 局域网访问
+    host: '0.0.0.0',
+    // 端口号
+    port: 3001,
+  }
+})
+```
+```json
+// tsconfig.json
+{
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "include": [
+    "env.d.ts", 
+    "src/**/*", 
+    "src/**/*.vue",
+    // 以下没添加, 在 vscode 会看到报错
+    "src/**/*.ts", 
+    "src/**/*.d.ts", 
+    "src/**/*.tsx", 
+    "src/**/*.vue",
+    "./auto-imports.d.ts",
+    "./components.d.ts",
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "references": [
+    {
+      "path": "./tsconfig.config.json"
+    }
+  ]
+}
+```
+
+## [环境变量](https://cn.vitejs.dev/guide/env-and-mode.html)
+```
+# 新建 .env.development
+# 定义的变量名必须以 VITE_ 为前缀
+# base api
+VITE_BASE_API = 'http://localhost:3080/web/api'
+
+# 新建 .env.production
+# base api
+VITE_BASE_API = 'https://app.yjsjyb.top/web/api'
+```
+```ts
+// 读取时
+console.log(import.meta.env.VITE_BASE_API) 
+// 如果运行 yarn dev, 则会读取 .env.development 里定义的变量
+// 如果运行 yarn build, 则会读取 .env.production 里定义的变量
+```
+```ts
+// 修改 tsconfig.json
+"compilerOptions": {
+  "baseUrl": ".",
+  "paths": {
+    "@/*": ["./src/*"]
+  },
+  // 添加这个, 没有会报错 类型“ImportMeta”上不存在属性“env”
+  "types": [ "vite/client" ]
+},
+```
+
+## 使用[lib-flexible](https://github.com/amfe/lib-flexible)等比例缩放布局, 适配移动端
+```ts
+// @/utils/amfeFlexible.ts
+export default function flexible (window: any, document: any) {
+  // 根元素
+  var docEl = document.documentElement
+  // 获取设备的dpr, 设备物理像素分辨率与CSS像素分辨率之比
+  var dpr = window.devicePixelRatio || 1
+
+  // adjust body font size
+  // 设置默认字体大小(继承自body)
+  function setBodyFontSize () {
+    if (document.body) {
+      document.body.style.fontSize = (12 * dpr) + 'px'
+    } else {
+      // 文档完全加载和解析完成后
+      document.addEventListener('DOMContentLoaded', setBodyFontSize)
+    }
+  }
+  setBodyFontSize();
+
+  // set 1rem = viewWidth / 10
+  // 设置根元素字体大小(设置1个rem的大小)
+  function setRemUnit () {
+    // 把屏幕宽度分成10份
+    var rem = docEl.clientWidth / 10
+    docEl.style.fontSize = rem + 'px'
+  }
+  setRemUnit()
+
+  // reset rem unit on page resize
+  // 视图大小调整
+  window.addEventListener('resize', setRemUnit)
+  // 往返缓存
+  window.addEventListener('pageshow', function (e: any) {
+    // 往返缓存存储了页面e.persisted: true
+    if (e.persisted) {
+      setRemUnit()
+    }
+  })
+
+  // detect 0.5px supports
+  // 检测是否支持 0.5px, 如果支持就在根元素类名添加 hairlines 作为标记
+  if (dpr >= 2) {
+    var fakeBody = document.createElement('body')
+    var testElement = document.createElement('div')
+    testElement.style.border = '.5px solid transparent'
+    fakeBody.appendChild(testElement)
+    docEl.appendChild(fakeBody)
+    if (testElement.offsetHeight === 1) {
+      docEl.classList.add('hairlines')
+    }
+    docEl.removeChild(fakeBody)
+  }
+}
+```
+使用时
+```ts
+// @/main.ts
+import amfeFlexible from '@/utils/amfeFlexible'
+amfeFlexible(window, document)
+```
+```vscode```安装插件```px to rem```, 打开设置, 搜索 ```cssrem```, 找到 ```Cssrem: Root Font Size``` -> 在下方输入框输入**设计稿的宽度 / 10**(比如设计稿750, 就输入75)。 \
+在写```css```时输入```12px```, 会弹出提示转换为```rem```的对应值, 就不用去计算```px```对应的```rem```值。
+
+## 使用```axios```, 封装请求接口
+```ts
+// 简单封装一下axios
+// @/api/index.ts
+import axios, { type AxiosRequestConfig } from 'axios'
+const instance = axios.create({
+  baseURL: import.meta.env.VITE_BASE_API,
+  timeout: 8 * 1000,
+})
+instance.interceptors.request.use(
+  (config: AxiosRequestConfig | any) => {
+    return config
+  },
+  (error: any) => {
+    return Promise.reject(error);
+  }
+)
+instance.interceptors.response.use(
+  (response: any) => {
+    return Promise.resolve(response.data)
+  },
+  (error: any) => {
+    return Promise.reject(error);
+  }
+)
+
+export default instance
+
+// @/api/home.ts
+import request from "./index";
+export const getAds = () => {
+  return request({
+    url: "/home/ads",
+  });
+};
+```
+
+## 使用 [```swiper```](https://swiperjs.com/demos) [```swiper``` API文档](https://www.swiper.com.cn/api/index.html)
+```bash
+yarn add swiper
+```
+
+## ```Vue3```新写法
+### 自定义组件传入参数并设置默认值的写法
+```ts
+<script lang="ts" setup>
 interface NavBar {
   title: string;
-  name: string
 }
-
-interface Props {
-  // navTitle?: NavBar[],
-  // ?表示可选参数
-  navTitle?: Array<NavBar>;
-  backgroundColor?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(
+defineProps<{
+  navTitle?: NavBar[],
+  backgroundColor: string
+}>(), 
+{
   navTitle: function() {
     return [
-      {
-        title: '首页',
-        name: 'home'
-      },
-      {
-        title: '攻略中心',
-        name: 'strategy'
-      },
-      {
-        title: '赛事中心',
-        name: 'race'
-      }
+      { title: '首页' },
+      { title: '攻略中心' },
     ]
   },
   backgroundColor: '#db9e3f'
 })
-```
-2. 写法二
-```ts
-interface NavBar {
-  title: string;
-  name: string
-}
-const props = withDefaults(
-  defineProps<
-    {
-      navTitle?: NavBar[],
-      backgroundColor?: string
-    }
-  >(),
-  {
-    navTitle: () => [
-      {
-        title: '首页',
-        name: 'home'
-      },
-      {
-        title: '攻略中心',
-        name: 'strategy'
-      },
-      {
-        title: '赛事中心',
-        name: 'race'
-      }
-    ],
-    backgroundColor: '#db9e3f'
-  }
-)
+</script>
 ```
 
-### 3. 更新了```keep-alive```的写法
+### ```emit```
+```ts
+const emit = defineEmits<{
+  (e: 'heroChange', name: string): void
+}>()
+const selectHero = (hero: string) => {
+  emit('heroChange', hero)
+}
+```
+
+### ```keep-alive```新写法
 ```html
 <router-view v-slot="{ Component }">
   <keep-alive :exclude="/.*Exclude$/">
@@ -97,65 +253,53 @@ const props = withDefaults(
 </router-view>
 ```
 
-### 4. 缓存组件的同时, 也需要保留组件切换前的滚动高度
-```js
-// 获取滚动高度,  也可能是记录某个元素的滚动高度
-let scrollH = document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset
-// 在离开路由前记录高度
-onBeforeRouteLeave((to, from) => {
-  // 记录高度
+### ```pinia```读取属性时, 响应式问题
+```ts
+// @/stores/index.ts
+export const strategyStore = defineStore('strategy', () => {
+  // 英雄名称
+  const heroName = ref<string>('')
+  return { heroName }
 })
-// 在keep-alive对应的生命周期函数
-onActivated(() => {
-  // 恢复记录的高度
+
+// 在组件读取 heroName 时
+// heroName 非响应式
+const heroName = strategyStore().heroName
+setTimeout(() => {
+  console.log(heroName); // ''
+  strategyStore().heroName = '鲁班七号'
+  console.log(heroName); // ''
+}, 1000);
+
+// heroName1 响应式
+const heroName = computed<string>(() => {
+  return strategyStore().heroName
 })
-// 因为多个页面需要用到, 可以提取为组件使用
+setTimeout(() => {
+  console.log(heroName.value); // ''
+  strategyStore().heroName = '鲁班七号'
+  console.log(heroName.value); // '鲁班七号'
+}, 1000);
+
+// heroName 响应式
+const { heroName } = storeToRefs(strategyStore())
+setTimeout(() => {
+  console.log(heroName.value); // ''
+  strategyStore().heroName = '鲁班七号'
+  console.log(heroName.value); // '鲁班七号'
+}, 1000);
 ```
 
-### 5. 使用轮播 ```swiper```, [vue3使用swiper的写法与vue2不太一样, 可以看demo如何配置](https://swiperjs.com/demos)
-
-### 6. 使用全局属性的对象
-```js
+### 全局属性的对象
+```ts
 // vue2 写法
 Vue.prototype.msg = 'hello'
-
+console.log(this.msg) // 'hello'
 // vue3
 app.config.globalProperties.msg = 'hello'
-const {proxy} = getCurrentInstance()
-console.log(proxy.msg)
+const { proxy } = getCurrentInstance()
+console.log(proxy.msg) // 'hello'
 ```
-
-### 7. 使用 [pinia](https://pinia.web3doc.top/introduction.html)
-```js
-// @/store/strategy.ts
-export const strategyStore = defineStore(
-  'strategy', 
-  {
-    state: () => {
-      return { heroName: '' }
-    },
-    getters: { },
-    actions: {
-      changeHeroName(name: string) {
-        this.heroName = name
-      }
-    }
-  }
-)
-
-// 在 setup 
-import { strategyStore } from "@/store/strategy"
-strategyStore().changeHeroName('鲁班七号')
-```
-
-### 8. 导航头点击后调整位置, 通过设置父容器的```scrollLeft```, 让选中的标题尽可能保持在中间位置
-![导航头](./prevImg/%E5%AF%BC%E8%88%AA%E5%A4%B4%E4%BD%8D%E7%BD%AE.png)
-1. 标题的父容器需设置可以横向滚动```overflow-x: scroll;```
-1. 需要获取标题元素的在父容器横向位置(```activeEl.offsfetLeft```), 还有父容器的一半宽度(```navWidth/2```)
-1. 当点击的标题```activeEl.offsfetLeft```小于等于父容器一半宽度, 就把父容器的横向位置设置为0
-1. 大于一半时, 就需要向左移动以保持在中间位置, 设置父容器的```scrollLeft```为 ```activeEl.offsfetLeft``` 减去一半宽度, 但这样并不是直接居中, 而是最左侧与一半宽度对齐了, 还需要再加上标题的一半宽度 
-
-### 9. 根据后台管理系统里的分类列表, 分出多块区域
 
 ## <a id="图片预览">图片预览</a>
 <!-- ![首页](./prevImg/%E9%A6%96%E9%A1%B5.jpg)
@@ -203,27 +347,39 @@ strategyStore().changeHeroName('鲁班七号')
 9 文章页
 <br />
 <img style="display: block; width: 300px; margin: 10px 0 30px; box-shadow: 0px 0px 20px -6px #868686" src="./prevImg/文章页.jpg" alt="文章页.jpg">
+## Recommended IDE Setup
 
-# Vue 3 + TypeScript + Vite
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-```bash
-# 安装依赖
+## Type Support for `.vue` Imports in TS
+
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+
+If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+
+1. Disable the built-in TypeScript Extension
+    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
+    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
+2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+
+## Customize configuration
+
+See [Vite Configuration Reference](https://vitejs.dev/config/).
+
+## Project Setup
+
+```sh
 yarn
-# 运行
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
 yarn dev
 ```
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+### Type-Check, Compile and Minify for Production
 
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
-
-## Type Support For `.vue` Imports in TS
-
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
-
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
-
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+```sh
+yarn build
+```

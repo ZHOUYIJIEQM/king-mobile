@@ -1,157 +1,181 @@
 <template>
-  <KeepScrollVue>
-    <div class="home-page">
-      <BannerVue :swiper-data="firstSwiper.data"></BannerVue>
-      <div class="entry-box">
-        <ul class="entry-list">
-          <li v-for="(item, index) in entryList.data" :key="index" :class="item.cName">
-            <a :href="item.href" target="_blank">
-              <i></i>
-              <span>{{ item.name }}</span>
-            </a>
-          </li>
-        </ul>
-        <div class="collapse-box" @click="toggleCollapseState">
-          <span class="collapse-icon" :class="[isCollapse && 'down']"></span>
-          <span class="text">{{ isCollapse ? "展开" : "收起" }}</span>
+  <div class="home-page">
+    <Banner
+      :swiperData="firstSwiper"
+      :modules="['Autoplay', 'Pagination']"
+      :loop="true"
+    >
+      <template #default="props">
+        <a target="_blank" class="img-box" :href="props.slideItem.url">
+          <img :src="props.slideItem.img" alt="" />
+        </a>
+      </template>
+    </Banner>
+    <div class="entry-box">
+      <ul class="entry-list">
+        <li v-for="(item, index) in entryList" :key="index" :class="item.cName">
+          <a target="_blank" :href="item.href">
+            <i></i>
+            <span>{{ item.name }}</span>
+          </a>
+        </li>
+      </ul>
+      <div class="collapse-box" @click="toggleCollapseState">
+        <span class="collapse-icon" :class="[isCollapse && 'down']"></span>
+        <span class="text">{{ isCollapse ? "展开" : "收起" }}</span>
+      </div>
+    </div>
+    <div class="content-box">
+      <div class="cont-item news">
+        <div class="cont-title">
+          <span class="ico_news"></span>
+          <span class="text">新闻资讯</span>
+          <span class="ico_more"></span>
+        </div>
+        <NavBanner :navSwiperData="newsSwiper">
+          <template #slideItem="slotProps">
+            <div class="swiperItem-box">
+              <div
+                class="news-item"
+                v-for="(i, j) in slotProps.swiperItem.dataList"
+                :key="j"
+                @click="
+                  router.push({
+                    name: 'articleDetail',
+                    params: { articleId: i._id },
+                  })
+                "
+              >
+                <div
+                  class="flag"
+                  :style="{
+                    borderColor: borderColor.get(slotProps.swiperItem.name),
+                    color: borderColor.get(slotProps.swiperItem.name),
+                  }"
+                >
+                  {{ slotProps.swiperItem.name }}
+                </div>
+                <div class="text eli">{{ i.name }}</div>
+                <div class="date">{{ formatDate(i.createdTime) }}</div>
+              </div>
+            </div>
+          </template>
+        </NavBanner>
+        <div
+          v-if="!newsSwiper.length"
+          :style="{
+            height: '6rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '16px',
+          }"
+        >
+          正在加载...
         </div>
       </div>
-      <div class="home-content">
-        <div class="cont-item news">
-          <div class="cont-title">
-            <span class="ico_news"></span>
-            <span class="text">新闻资讯</span>
-            <span class="ico_more"></span>
-          </div>
-          <template v-if="newsSwiper.data.length">
-            <NavBannerVue :navSwiperData="newsSwiper.data">
-              <!-- <template #title="slotProps">
-                <div class="title-inner-box">
-                  <span 
-                    v-for="(i, j) in slotProps.swiperTitle" 
-                    :key="j"
-                    :class="{active: j === activeIndex}"
-                    @click="changeActive(j, slotProps.swiperEl)"
-                  >{{ i }}</span>
-                </div>
-              </template> -->
-              <template #slideItem="slotProps">
-                <div class="swiperItem-box">
-                  <div 
-                    class="news-item" 
-                    v-for="(i, j) in slotProps.swiperItem.dataList" 
-                    :key="j"
-                    @click="goPage({name: 'articleDetail', params: {'articleId': i._id}})"
-                  >
-                    <div class="flag" :style="{borderColor: borderColor.get(slotProps.swiperItem.name), color: borderColor.get(slotProps.swiperItem.name)}">{{slotProps.swiperItem.name}}</div>
-                    <div class="text eli">{{i.title}}</div>
-                    <div class="date">{{formatDate(i.createdTime)}}</div>
-                  </div>
-                </div>
-              </template>
-            </NavBannerVue>
-          </template>
-          <template v-else>
-            <div :style="{ height: '6rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }" >
-              正在加载...
-            </div>
-          </template>
+      <div class="cont-item heros">
+        <div class="cont-title">
+          <span class="ico_hero"></span>
+          <span class="text">英雄列表</span>
+          <span class="ico_more"></span>
         </div>
-
-        <div class="cont-item heros">
-          <div class="cont-title">
-            <span class="ico_hero"></span>
-            <span class="text">英雄列表</span>
-            <span class="ico_more"></span>
-          </div>
-          <div class="hero-banner-box">
-            <BannerVue :swiper-data="heroBanner.data"></BannerVue>
-          </div>
-          <div class="hero-list-box">
-            <template v-if="heroList.data.length">
-              <NavBannerVue :navSwiperData="heroList.data">
-                <template #slideItem="slotProps">
-                  <div class="hero-list">
-                    <div 
-                      class="hero-item"
-                      v-for="(i, j) in slotProps.swiperItem.dataList"
-                      :key="j"
-                      @click="goPage({name: 'heroDetail', params: {heroName: i.name} })"
-                    >
-                      <img :src="i.avatar" alt="">
-                      <p>{{i.name}}</p>
-                    </div>
-                  </div>
-                </template>
-              </NavBannerVue>
+        <div class="hero-banner-box">
+          <Banner
+            :swiper-data="heroBanner"
+            :modules="['Autoplay', 'Pagination']"
+            :loop="true"
+          >
+            <template #default="props">
+              <a target="_blank" class="img-box">
+                <img :src="props.slideItem.img" alt="" />
+              </a>
             </template>
-            <template v-else>
-              <div :style="{ height: '3rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }" >
-                正在加载...
+          </Banner>
+        </div>
+        <div class="hero-list-box">
+          <NavBanner :navSwiperData="heroList">
+            <template #slideItem="slotProps">
+              <div class="hero-list">
+                <div
+                  class="hero-item"
+                  v-for="(i, j) in slotProps.swiperItem.dataList"
+                  :key="j"
+                  @click="
+                    router.push({
+                      name: 'heroDetail',
+                      params: { heroName: i.name },
+                    })
+                  "
+                >
+                  <img :src="i.avatar" alt="" />
+                  <p>{{ i.name }}</p>
+                </div>
               </div>
             </template>
+          </NavBanner>
+          <div
+            v-if="!heroList.length"
+            :style="{
+              height: '3rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '16px',
+            }"
+          >
+            正在加载...
           </div>
         </div>
-
-        <div class="cont-item vdo-hot">
-          <div class="cont-title">
-            <span class="ico_video"></span>
-            <span class="text">精彩视频</span>
-            <span class="ico_more"></span>
-          </div>
-          <div class="highvdo-box">
-            <div class="vdo-item-box"
-              v-for="(item, index) in highVdo.data"
-              :key="index"
-            >
-              <VideoInfoVue :video-info="item"></VideoInfoVue>
-            </div>
+      </div>
+      <div class="cont-item vdo-hot">
+        <div class="cont-title">
+          <span class="ico_video"></span>
+          <span class="text">精彩视频</span>
+          <span class="ico_more"></span>
+        </div>
+        <div class="highvdo-box">
+          <div class="vdo-item-box"
+            v-for="(item, index) in highVdo"
+            :key="index"
+          >
+            <VideoInfo :video-info="item"></VideoInfo>
           </div>
         </div>
       </div>
     </div>
-  </KeepScrollVue>
+  </div>
 </template>
 <script lang="ts" setup>
-import { getCurrentInstance, onMounted, reactive, ref } from "vue";
-import BannerVue from "../components/Banner.vue";
-import NavBannerVue from "../components/NavBanner.vue";
-import VideoInfoVue from "../components/VideoInfo.vue";
-import KeepScrollVue from '../components/KeepScroll.vue'
-import { useRouter } from "vue-router";
+import homeApi from "@/api/home";
+import { saveScrollH } from '@/utils/saveScrollH';
+saveScrollH()
 
-const $router = useRouter();
-const goPage = (params: any) => {
-  $router.push(params)
-}
+const router = useRouter();
 
-const app: any = getCurrentInstance();
-const homeReq = app.proxy.$HomeReq;
-
+// 轮播
 interface SwiperDataType {
   img: string;
   url: string;
 }
-// 第一个轮播
-// let firstSwiper = []
-let firstSwiper = reactive({
-  data: [] as Array<SwiperDataType>,
-});
-const getFirstSwiper = async () => {
-  let res = await homeReq.getAds();
-  if (res.status === 200) {
-    firstSwiper.data = res.data.items;
-  }
-};
-
-
-// 中间多个入口图标
+// 入口图标类型
 interface EntryListType {
   href: string;
   name: string;
   cName: string;
 }
-const EntryListFull: Array<EntryListType> = [
+
+// 第一个轮播
+const firstSwiper = ref<SwiperDataType[]>([]);
+const getFirstSwiper = async () => {
+  let res = await homeApi.getAds();
+  if (res.status === 200) {
+    firstSwiper.value = res.data.items;
+  }
+};
+
+// 中间多个入口图标
+const allEntryList: EntryListType[] = [
   {
     href: "https://pvp.qq.com/m/m201706/coming/index.htm",
     name: "爆料站",
@@ -188,8 +212,7 @@ const EntryListFull: Array<EntryListType> = [
     cName: "zs",
   },
   {
-    href:
-      "https://game.weixin.qq.com/cgi-bin/comm/openlink?noticeid=90102708&appid=wx95a3a4d7c627e07d&url=https%3A%2F%2Fgame.weixin.qq.com%2Fcgi-bin%2Fh5%2Fstatic%2Fsubscribe%2Findex.html%3Fappid%3Dwx95a3a4d7c627e07d#wechat_redirect",
+    href: "https://game.weixin.qq.com/cgi-bin/comm/openlink?noticeid=90102708&appid=wx95a3a4d7c627e07d&url=https%3A%2F%2Fgame.weixin.qq.com%2Fcgi-bin%2Fh5%2Fstatic%2Fsubscribe%2Findex.html%3Fappid%3Dwx95a3a4d7c627e07d#wechat_redirect",
     name: "公众号",
     cName: "gzh",
   },
@@ -214,146 +237,116 @@ const EntryListFull: Array<EntryListType> = [
     cName: "cyhdy",
   },
 ];
-let entryList = reactive({
-  data: [] as EntryListType[],
-});
-// entryList.data = EntryListFull
-entryList.data = EntryListFull.slice(0, 4);
-// 是否折叠状态
-let isCollapse = ref<boolean>(true);
+const entryList = ref<EntryListType[]>(allEntryList.slice(0, 4));
+
+// 入口处是否折叠状态
+const isCollapse = ref<boolean>(true);
+// 切换折叠状态
 const toggleCollapseState = () => {
   if (isCollapse.value) {
-    entryList.data = EntryListFull;
+    entryList.value = allEntryList;
   } else {
-    entryList.data = EntryListFull.slice(0, 4);
+    entryList.value = allEntryList.slice(0, 4);
   }
   isCollapse.value = !isCollapse.value;
 };
 
-
 // 新闻资讯
-let newsSwiper = reactive({
-  data: [],
-});
-/**
- * 新闻资讯
- */
-const getShortNews = async () => {
+const newsSwiper = ref<any[]>([]);
+// 新闻资讯对应的边框颜色
+const borderColor = new Map([
+  ["热门", "#ff3636"],
+  ["新闻", "#1e96ab"],
+  ["广告", "#f09a37"],
+  ["活动", "#ff3636"],
+  ["赛事", "#4d9cff"],
+]);
+const getNews = async () => {
   try {
-    let res = await homeReq.getShortnews();
+    let res = await homeApi.getShortnews();
     if (res.status === 200) {
-      // console.log('新闻资讯', res.data);
-      newsSwiper.data = res.data;
+      newsSwiper.value = res.data;
     }
   } catch (error) {
     console.log(error);
-    console.log('新闻资讯');
+    console.log("新闻资讯");
   }
 };
-
-
-/**
- * 边框颜色
- */
-const borderColor = new Map([
-  ['热门', '#ff3636'],
-  ['新闻', '#1e96ab'],
-  ['广告', '#f09a37'],
-  ['活动', '#ff3636'],
-  ['赛事', '#4d9cff']
-])
-
 
 // 英雄列表轮播
-let heroBanner = reactive({
-  data: []
-})
-/**
- * 英雄列表轮播
- */
+const heroBanner = ref<any[]>([]);
 const getHeroBanner = async () => {
   try {
-    let res = await homeReq.getHeroBanner();
+    let res = await homeApi.getHeroBanner();
     if (res.status === 200) {
       // console.log('英雄列表轮播', res.data.items);
-      heroBanner.data = res.data.items
+      heroBanner.value = res.data.items;
     }
   } catch (error) {
     console.log(error);
-    console.log('英雄列表轮播');
+    console.log("英雄列表轮播");
   }
 };
 
-
-let heroList = reactive({
-  data: []
-})
-/**
- * 英雄列表
- */
+// 英雄列表
+const heroList = ref<any[]>([]);
 const getHeroList = async () => {
   try {
-    let res = await homeReq.getHeroList()
+    let res = await homeApi.getHeroList();
     if (res.status === 200) {
       // console.log('英雄列表', res.data);
-      heroList.data = res.data
+      heroList.value = res.data;
     }
   } catch (error) {
     console.log(error);
-    console.log('英雄列表');
+    console.log("英雄列表");
   }
-}
+};
 
-
-let highVdo = reactive({
-  data: []
-})
-/**
- * 精彩视频
- */ 
+// 精彩视频
+const highVdo = ref<any[]>([]);
 const highlightVdo = async () => {
   try {
-    let res = await homeReq.getHighLigthVdo()
+    let res = await homeApi.getHighLigthVdo();
     if (res.status === 200) {
       // console.log('首页精彩视频', res.data);
-      highVdo.data = res.data
+      highVdo.value = res.data;
     }
   } catch (error) {
     console.log(error);
-    console.log('首页精彩视频错误');
+    console.log("首页精彩视频错误");
   }
-}
+};
 
-
-/**
- * 时间格式
- * @param str 
- */
-const formatDate = (str:string):string => {
-  let res = Array.from(str.matchAll(/^\d+\-(\d+)\-(\d+)\s.*?$/ig))[0]
-  return `${res[1]}/${res[2]}`
-}
+// 时间格式
+const formatDate = (str: string): string => {
+  const f = (val: number): string => {
+    return val < 10 ? `0${val}` : `${val}`;
+  };
+  const d = new Date(str);
+  return `${f(d.getMonth() + 1)}-${f(d.getDate())}`;
+};
 
 onMounted(async () => {
   await getFirstSwiper();
-  await getShortNews();
+  await getNews();
   await getHeroBanner();
   await getHeroList();
-  await highlightVdo()
-})
-
-// let activeIndex = ref<number>(0)
-// const changeActive = (index: number, swiper: any) => {
-//   activeIndex.value = index
-//   swiper.slideTo(index)
-// }
-
+  await highlightVdo();
+});
 </script>
 <style lang="scss" scoped>
 .home-page {
   .banner-box,
   .banner-loading {
     height: 4.4rem;
+  }
+
+  .banner .img-box {
+    display: block;
+    img {
+      width: 100%;
+    }
   }
 
   .entry-box {
@@ -379,7 +372,8 @@ onMounted(async () => {
         }
 
         a {
-          display: block;
+          display: flex;
+          align-items: center;
           height: 100%;
           text-decoration: none;
           color: #222;
@@ -397,7 +391,7 @@ onMounted(async () => {
 
           i {
             display: block;
-            height: 100%;
+            height: 70%;
             width: 100%;
             background: url("../assets/index.png") no-repeat;
             background-size: 10rem;
@@ -459,20 +453,20 @@ onMounted(async () => {
       }
 
       .djhj i {
-        background: url(//game.gtimg.cn/images/yxzj/m/m201706/images/bg/djhj.png) 0.7rem
-          0.15rem no-repeat;
+        background: url(//game.gtimg.cn/images/yxzj/m/m201706/images/bg/djhj.png)
+          0.7rem 0.15rem no-repeat;
         background-size: 1.05rem;
       }
 
       .ipgc i {
-        background: url(//game.gtimg.cn/images/yxzj/m/m201706/images/bg/ipgc.png) 0.8rem
-          0.05rem no-repeat;
+        background: url(//game.gtimg.cn/images/yxzj/m/m201706/images/bg/ipgc.png)
+          0.8rem 0.05rem no-repeat;
         background-size: 0.85rem;
       }
 
       .cyhdy i {
-        background: url(//game.gtimg.cn/images/yxzj/m/m201706/images/bg/cyhdy.png) 0.85rem
-          0.1rem no-repeat;
+        background: url(//game.gtimg.cn/images/yxzj/m/m201706/images/bg/cyhdy.png)
+          0.85rem 0.1rem no-repeat;
         background-size: 0.75rem;
       }
     }
@@ -504,12 +498,12 @@ onMounted(async () => {
     }
   }
 
-  .home-content {
+  .content-box {
     background-color: #f5f5f5;
     overflow: hidden;
 
     .hero-banner-box {
-      padding: 0 .4rem;
+      padding: 0 0.4rem;
     }
 
     .cont-item {
@@ -559,29 +553,29 @@ onMounted(async () => {
       min-height: 6.1333rem;
       .swiperItem-box {
         .news-item {
-          font-size: .4267rem;
+          font-size: 0.4267rem;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: .1333rem .4rem;
-          
+          padding: 0.1333rem 0.4rem;
+
           .flag {
-            font-size: .3733rem;
-            border-radius: .08rem;
+            font-size: 0.3733rem;
+            border-radius: 0.08rem;
             border: 1px solid #d6a419;
             color: #d6a419;
             padding: 2px 3px;
-            font-size: .32rem;
+            font-size: 0.32rem;
           }
           .text {
-            margin: 0 .2667rem;
+            margin: 0 0.2667rem;
             flex: 1;
             color: #222;
-            font-size: .3733rem;
+            font-size: 0.3733rem;
           }
           .date {
             color: #777;
-            font-size: .32rem;
+            font-size: 0.32rem;
           }
         }
       }
@@ -591,7 +585,7 @@ onMounted(async () => {
       min-height: 8rem;
       .hero-list-box {
         .hero-list {
-          padding: 0 .4rem;
+          padding: 0 0.4rem;
           display: flex;
           flex-wrap: wrap;
           .hero-item {
@@ -600,13 +594,13 @@ onMounted(async () => {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: .2133rem;
+            margin-bottom: 0.2133rem;
             img {
               width: 80%;
             }
             p {
-              margin-top: .2133rem;
-              font-size: .32rem;
+              margin-top: 0.2133rem;
+              font-size: 0.32rem;
             }
           }
         }
@@ -621,11 +615,12 @@ onMounted(async () => {
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
-      padding: .4rem;
+      padding: 0.4rem;
       .vdo-item-box {
         width: 49%;
-        margin-bottom: .1333rem;
-        &:nth-last-child(1), &:nth-last-child(2) {
+        margin-bottom: 0.1333rem;
+        &:nth-last-child(1),
+        &:nth-last-child(2) {
           margin-bottom: 0;
         }
       }
@@ -641,7 +636,5 @@ onMounted(async () => {
     background-size: 10rem;
     display: inline-block;
   }
-
-
 }
 </style>

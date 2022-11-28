@@ -1,5 +1,5 @@
 <template>
-  <div class="nav-banner-box">
+  <div class="nav-banner-box" v-if="navSwiperData.length">
     <slot name="title" :swiperTitle="title" :swiperEl="swiperRef"></slot>
     <div class="title-box" v-if="!customTitle" ref="titleBox">
       <span
@@ -28,11 +28,9 @@
     </swiper>
   </div>
 </template>
-
 <script lang="ts" setup>
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
-import { ref, watch } from "vue";
 
 interface swiperType {
   name: string;
@@ -51,7 +49,7 @@ const props = withDefaults(
   }
 );
 
-let activeIndex = ref<number>(0)
+const activeIndex = ref<number>(0)
 const title = ref<string[]>([]);
 watch(
   () => props.navSwiperData,
@@ -75,8 +73,8 @@ const emit= defineEmits<{
 
 // swiper instance
 const swiperRef = ref()
-let titleItem = ref()
-let titleBox = ref()
+const titleItem = ref()
+const titleBox = ref()
 const slideChange = () => {
   const index = swiperRef.value.activeIndex
   activeIndex.value = index
@@ -104,9 +102,7 @@ const slideChange = () => {
 const newsSwiper = (swiperInstance: any) => {
   swiperRef.value = swiperInstance
 }
-
 </script>
-
 <style lang="scss" scoped>
 .nav-banner-box {
   .title-box {

@@ -26,12 +26,10 @@
         {{item.name}}
       </div>
     </div>
-    
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { strategyStore } from "../store/strategy";
+import { strategyStore } from "@/stores/index";
 import type { heroType } from '../models/hero'
 
 interface heroDataType {
@@ -60,7 +58,6 @@ const selectHero = (hero: string) => {
   strategyStore().changeHeroName(hero)
   emit('heroChange', hero)
 }
-
 </script>
 <style lang="scss" scoped>
 .hero-box-comp {

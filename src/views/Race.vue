@@ -1,6 +1,6 @@
 <template>
   <div class="race-page">
-    <div class="nav-title" ref="navTitle">
+    <div class="nav-title" ref="navTitlebox">
       <div 
         class="title-item"
         ref="titleItem"
@@ -8,47 +8,44 @@
         :key="index"
         :class="{'active': activeIndex === index}"
         @click="changeTitle(index)"
-      >
-        {{item}}
-      </div>
+      >{{item}}</div>
     </div>
     <div class="race-content-box" ref="raceBox">
       <swiper
-        v-if="raceArticle.data.length"
         class="race-swiper" 
         :resistanceRatio="0"
         @swiper="getSwiper"
-        @slide-change="slideChange"
+        @slideChange="slideChange"
       >
         <swiper-slide
           class="slide-item"
-          v-for="(item, index) in raceArticle.data"
+          ref="slideItemBox"
+          v-for="(item, index) in raceArticle"
           :key="index"
+          @scroll.passive="handleScroll(index)"
         >
-          <div class="item-box" ref="itemBox" @scroll="handleScroll(index)">
-            <div class="inner-box" ref="itemInnerBox">
-              <div class="race-title">王者荣耀 {{title[index]}} <span>官方举办</span></div>
-              <img class="tagImg" v-if="imgList[index].length" :src="imgList[index]" alt="">
-              <div class="race-text" v-if="item?.dataList?.length">赛事资讯</div>
-              <div
-                class="race-title-item"
-                v-for="(item1, index1) in item.dataList"
-                :key="index1"
-                @click="$router.push({name: 'articleDetail', params: {'articleId': item1._id}})"
-              >
-                <div class="article-name eli">{{item1.title}}</div>
-                <div class="article-time">{{item1.createdTime.split(' ').at(0).split('-').slice(1).join('/')}}</div>
-              </div>
-              <div class="bottom-loading" v-show="bottomLoading">
-                <p>正在加载中...</p>
-              </div>
-              <div class="bottom-loading" v-show="finish.data[index]">
-                <p>已显示全部内容</p>
-              </div>
-              <div class="loading-tip" v-show="loading">正在加载中...</div>
-              <div class="no-data" v-if="item.dataList && !item.dataList.length">暂无该分类数据!</div>
+          <div
+            class="item-box"
+            ref="slideItemInnerBox"
+          >
+            <div class="race-title"> 王者荣耀 {{ title[index] }} <span>官方举办</span> </div>
+            <img class="tagImg" v-if="imgList[index].length" :src="imgList[index]" alt="" />
+            <div class="race-text" v-if="item?.dataList?.length"> 赛事资讯 </div>
+            <div
+              class="race-title-item"
+              v-for="(item1, index1) in item.dataList"
+              :key="index1"
+              @click=" router.push({ name: 'articleDetail', params: { articleId: item1._id }, }) "
+            >
+            <div class="article-name eli">{{ item1.name }}</div>
+            <div class="article-time">{{formatDate(item1.createdTime)}}</div>
             </div>
           </div>
+          <div class="bottom-loading" v-if="item.dataList.length">
+            <p v-show="item.dataList.length < item.total">正在加载中...</p>
+            <p v-show="item.dataList.length >= item.total">已显示全部内容</p>
+          </div>
+          <div class="no-data" v-if="!loading && !item.dataList.length">暂无该分类数据!</div>
         </swiper-slide>
       </swiper>
     </div>
@@ -57,17 +54,19 @@
 <script lang="ts" setup>
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
-import { getCurrentInstance, nextTick, onActivated, onMounted, reactive, ref } from 'vue';
-import { onBeforeRouteLeave, useRouter } from "vue-router";
-const app: any = getCurrentInstance()
-const $router = useRouter()
+import raceApi from '@/api/race';
 
-let title = ref([ "KPL", "挑战者杯", "全国大赛", "K甲联赛", "高校联赛", "TGA", "WGI", "模拟战大师赛" ])
+const router = useRouter()
+const title = ref([ "KPL", "挑战者杯", "全国大赛", "K甲联赛", "高校联赛", "TGA", "WGI", "模拟战大师赛" ])
 // 存放数据
-let raceArticle = reactive({ data: [] as any })
+const raceArticle = ref<any[]>(title.value.map((i: any) => ({
+  total: 0,
+  dataList: [],
+})))
 // 存放请求参数
-let reqParam = reactive({ data: [] as any })
-let imgList = ref([
+const reqParam = ref<any[]>(title.value.map((i: any) =>({ name: i, pageNum: 1, pageSize: 5 })))
+// 中部的图
+const imgList = ref<string[]>([
   'https://game.gtimg.cn/images/yxzj/m/m201706/images/matchindex/kpl.jpg',
   'https://game.gtimg.cn/images/yxzj/m/m201706/images/matchindex/kcc.jpg',
   '',
@@ -77,151 +76,136 @@ let imgList = ref([
   'https://game.gtimg.cn/images/yxzj/m/m201706/images/matchindex/wgi.jpg',
   'https://game.gtimg.cn/images/yxzj/m/m201706/images/matchindex/mnz.jpg'
 ])
-let scrollTop = Array.from({length: title.value.length}, () => 0)
-
-let loading = ref<boolean>(true)
-let bottomLoading = ref<boolean>(false)
-let finish = reactive({ data: [] as any})
-
-/**
- * swiper 实例
- */
-const swiperEl = ref()
+// 激活的导航下标
+const activeIndex = ref<number>(0)
+// swiper 实例
+let swiperEl = ref<any>(null)
+// 获取 swiper 实例
 const getSwiper = (swiperInstance: any) => {
   swiperEl.value = swiperInstance
 }
-
-const activeIndex = ref<number>(0)
+// 导航标签容器
+const navTitlebox = ref<any>(null)
+// 导航标签数组
+const titleItem = ref<any[]>([])
+// 每个标签块对应的轮播块容器, 需要固定高度, 这样可以保存切换前的滚动高度
+const slideItemBox = ref<any>(null)
+const slideItemInnerBox= ref<any>(null)
+// 内容加载
+const loading = ref<boolean>(true)
+// 底部加载提示
+const bottomLoading = ref<boolean>(false)
+// 导航标签切换时
+const changeTitle = async (index: number) => {
+  activeIndex.value = index
+  swiperEl.value.slideTo(index)
+}
+// swiper 切换时
 const slideChange = async () => {
   const index = swiperEl.value.activeIndex
   activeIndex.value = index
-
+  
   // 让导航标识居中
   let activeItemEl = titleItem.value[index]
-  // let rectInfo = activeItemEl.getBoundingClientRect()
-  let navTitleWidth = navTitle.value.offsetWidth
-  // if (rectInfo.left <= 0) {
-  //   navTitle.value.scrollTo({
-  //     left: navTitle.value.scrollLeft - navTitleWidth / 2 - activeItemEl.offsetLeft, 
-  //     top: 0,
-  //     behavior: 'smooth'
-  //   })
-  // }
+  let navTitleWidth = navTitlebox.value.offsetWidth
+  // 超过一半居中
   if (activeItemEl.offsetLeft > navTitleWidth / 2) {
-    // console.log('超过一半', navTitleWidth / 2 - activeItemEl.offsetLeft);
-    navTitle.value.scrollTo({
+    navTitlebox.value.scrollTo({
       left: activeItemEl.offsetLeft - navTitleWidth / 2 + activeItemEl.offsetWidth / 2, 
       top: 0,
       behavior: 'smooth'
     })
   }
+  // 小于一半滚动到 (0, 0)
   if (activeItemEl.offsetLeft <= navTitleWidth / 2) {
-    navTitle.value.scrollTo({
+    navTitlebox.value.scrollTo({
       left: 0, 
       top: 0,
       behavior: 'smooth'
     })
   }
 
-  // 没有数据就加载
-  if (!raceArticle.data[activeIndex.value]?.dataList?.length) {
-    loading.value = true
-    let data = await getRace(reqParam.data[activeIndex.value])
-    raceArticle.data[activeIndex.value] = data
-    // raceArticle.data.splice(activeIndex.value, 1, data)
-    // console.log('没有数据, 加入', raceArticle.data[activeIndex.value]);
-    loading.value = false
-
-    // 还没铺满就继续加载
-    await reGetData()
-  }
-  
+  await getItemData()
 }
-
-/**
- * 获取分类文章
- */
-const getRace = async (params: any) => {
-  let res = await app.proxy.$Race.getRaceArticle(params)
-  return res.data
-}
-
-const titleItem = ref<any>(null)
-const navTitle = ref<any>(null)
-const itemBox= ref<any>(null)
-const itemInnerBox= ref<any>(null)
-
-const reGetData = async () => {
+// 获取数据, 如果没满屏幕高度, 就重复获取, 到占满一个屏幕高度
+const getItemData = async () => {
+  loading.value = true
   await nextTick()
-  if (itemBox.value[activeIndex.value].offsetHeight - itemInnerBox.value[activeIndex.value].offsetHeight >= 0 && raceArticle.data[activeIndex.value].dataList.length < raceArticle.data[activeIndex.value].total) {
-    // console.log('还没铺满');
-    reqParam.data[activeIndex.value].pageNum += 1
-    let data = await getRace(reqParam.data[activeIndex.value])
-    if (data?.dataList?.length) {
-      raceArticle.data[activeIndex.value].dataList.push(...data.dataList)
-      finish.data[activeIndex.value] = raceArticle.data[activeIndex.value].dataList.length >= raceArticle.data[activeIndex.value].total 
+  // 这种情况要获取数据
+  if (
+    // 没有总数还未获取过数据
+    !raceArticle.value[activeIndex.value].total 
+    // 父容器高度 > 子容器高度
+    || (slideItemBox.value[activeIndex.value].$el.offsetHeight > slideItemInnerBox.value[activeIndex.value].offsetHeight
+      // 获取到的数量 < 可以获取的总数
+      && raceArticle.value[activeIndex.value].dataList.length < raceArticle.value[activeIndex.value].total)
+  ) {
+    reqParam.value[activeIndex.value].pageNum += 1
+    let res = await raceApi.getRaceArticle(reqParam.value[activeIndex.value])
+    loading.value = false
+    if (res.data.dataList?.length) {
+      raceArticle.value[activeIndex.value].dataList.push(...res.data.dataList)
+      raceArticle.value[activeIndex.value].total = res.data.total
     }
-    await reGetData()
+    // 有些导航标签可能没有内容, 不用再重新获取
+    if (raceArticle.value[activeIndex.value].total) {
+      await getItemData()
+    }
   }
 }
-
-/**
- * 标签切换
- */
-const changeTitle = async (index: number) => {
-  activeIndex.value = index
-  swiperEl.value.slideTo(index)
+// 处理滚动
+let scrollTimer: any = null
+const handleScroll = async () => {
+  scrollTimer && clearTimeout(scrollTimer)
+  scrollTimer = setTimeout(async () => {
+    if (
+      // 避免请求完成前重复触发
+      !bottomLoading.value 
+      // 滚动到距离底部小于50px时
+      && slideItemBox.value[activeIndex.value].$el.offsetHeight + slideItemBox.value[activeIndex.value].$el.scrollTop >= slideItemBox.value[activeIndex.value].$el.scrollHeight - 50
+      // 现有数量小于总数
+      && raceArticle.value[activeIndex.value].dataList.length < raceArticle.value[activeIndex.value].total
+    ) {
+      bottomLoading.value = true
+      let res = await raceApi.getRaceArticle(reqParam.value[activeIndex.value])
+      if (res.data.dataList?.length) {
+        raceArticle.value[activeIndex.value].dataList.push(...res.data.dataList)
+        raceArticle.value[activeIndex.value].total = res.data.total
+      }
+      reqParam.value[activeIndex.value].pageNum += 1
+      bottomLoading.value = false
+    }
+  }, 300)
 }
-
-/**
- * 处理滚动
- */
-const handleScroll = async (index: number) => {
-  if (!finish.data[index] && itemBox.value[index].offsetHeight + itemBox.value[index].scrollTop >= itemBox.value[index].scrollHeight - 30 && !bottomLoading.value) {
-    bottomLoading.value = true
-    // console.log('加载...');
-    reqParam.data[activeIndex.value].pageNum += 1
-    let data = await getRace(reqParam.data[activeIndex.value])
-    raceArticle.data[activeIndex.value].dataList.push(...data.dataList)
-    bottomLoading.value = false
-    finish.data[index] = raceArticle.data[activeIndex.value].dataList.length >= raceArticle.data[activeIndex.value].total 
-  }
-}
+// 时间格式
+const formatDate = (str: string): string => {
+  const f = (val: number): string => {
+    return val < 10 ? `0${val}` : `${val}`;
+  };
+  const d = new Date(str);
+  return `${d.getFullYear()}-${f(d.getMonth() + 1)}-${f(d.getDate())}`;
+};
 
 onMounted(async () => {
-  raceArticle.data = title.value.map(i => { return {} })
-  reqParam.data = title.value.map(i => {
-    return {
-      name: i,
-      pageNum: 1,
-      pageSize: 10
-    }
-  })
-  finish.data = title.value.map(i => false)
-  // console.log('数据', raceArticle.data);
-  // console.log('请求参数', reqParam.data);
-  // console.log('结束标记', finish.data);
-  await nextTick()
-  slideChange()
+  await getItemData()
 })
 
-let navTitleScrollLeft = 0
-
+// 离开当前路由保存滚动高度
+let navLeft: number = 0
+let scrollT: number[] = Array.from({ length: title.value.length }, () => 0);
+onBeforeRouteLeave(() => {
+  navLeft = Math.floor(navTitlebox.value.scrollLeft)
+  scrollT = slideItemBox.value.map((item: any) => item.$el.scrollTop)
+})
+// 重新设置滚动高度
 onActivated(async () => {
   await nextTick()
-  // 恢复滚动距离
-  navTitle.value.scrollLeft = navTitleScrollLeft
-  scrollTop.forEach((item, index) => {
-    itemBox.value[index].scrollTop = item
+  navTitlebox.value.scrollLeft = navLeft
+  scrollT.forEach((item, index) => {
+    slideItemBox.value[index].$el.scrollTop = item
   })
 })
 
-onBeforeRouteLeave(() => {
-  // 记录滚动距离
-  navTitleScrollLeft = Math.floor(navTitle.value.scrollLeft)
-  scrollTop = itemBox.value.map((item: any) => Math.floor(item.scrollTop)) 
-  // console.log(navTitleScrollLeft, scrollTop);
-})
 </script>
 <style lang="scss" scoped>
 .race-page {
@@ -266,6 +250,9 @@ onBeforeRouteLeave(() => {
   .race-content-box {
     flex: 1;
     overflow: hidden;
+    :deep(.swiper-slide) {
+      overflow: auto;
+    }
   }
   .race-swiper {
     height: 100%;
@@ -297,10 +284,6 @@ onBeforeRouteLeave(() => {
       padding: .24rem 0;
       color: #a2a2a2;
       background: #e4e4e4;
-    }
-    .item-box {
-      height: 100%;
-      overflow: auto;
     }
     .race-title-item {
       padding: .24rem .4rem;
@@ -341,8 +324,9 @@ onBeforeRouteLeave(() => {
         text-align: center;
         background-color: #e4e4e4;
         color: #767676;
-        padding: 9px 12px;
+        padding: .24rem .32rem;
         border-radius: .48rem;
+        margin: .32rem 0;
       }
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="main-nav">
-    <NavbarVue></NavbarVue>
+    <Navbar></Navbar>
   </div>
   <div class="main-content">
     <router-view v-slot="{ Component }">
@@ -10,9 +10,6 @@
     </router-view>
   </div>
 </template>
-<script lang="ts" setup>
-import NavbarVue from '../components/Navbar.vue';
-</script>
 <style lang="scss" scoped>
 .main-nav {
   position: fixed;
@@ -23,6 +20,7 @@ import NavbarVue from '../components/Navbar.vue';
 }
 .main-content {
   $navHeight: 1.12rem;
+  box-sizing: border-box;
   padding-top: $navHeight;
   height: 100%;
 }

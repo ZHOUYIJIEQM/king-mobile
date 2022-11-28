@@ -1,19 +1,15 @@
 <template>
   <div class="video-detail-page">
     <div class="navbar">
-      <span @click="$router.push({name: 'home'})">王者荣耀</span>
-      <!-- todo: 跳转到英雄列表 -->
-      <span 
-        style="font-size: 12px;"
-        @click="$router.replace({name: 'HeroList'})"
-      >更多英雄></span>
+      <span @click="router.push({name: 'home'})">王者荣耀</span>
+      <span style="font-size: 12px;" @click="router.replace({name: 'HeroList'})">更多英雄></span>
     </div>
     <div class="detail-nav eli" v-if="vdoInfo.name">
-      <div class="back" @click="$router.go(-1)">&lt;</div>
+      <div class="back" @click="router.go(-1)">&lt;</div>
       <div class="title eli">{{vdoInfo.name}}</div>
     </div>
     <div class="vdo-content">
-      <div class="vdo-box" @click="app.proxy.$toast({msg: '无法播放, 视频地址不可用!', className: 'error'})">
+      <div class="vdo-box" @click="app.proxy.$toast({msg: '无法播放, 视频地址不可用!', className: 'error', duration: 2000})">
         <img :src="vdoInfo.img" alt="">
         <span class="play-icon"></span>
         <span class="time" v-if="vdoInfo.iTime">{{vdoInfo.iTime}}</span>
@@ -34,21 +30,20 @@ export default {
 }
 </script>
 <script lang="ts" setup>
-import { getCurrentInstance, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import resApi from '@/api/resource';
 
-const $route = useRoute()
+const route = useRoute()
+const router = useRouter()
 const app: any = getCurrentInstance()
+const vdoInfo = ref<any>({})
 
-let vdoInfo = ref<any>({})
 async function getVideoDetail(params: any) {
-  let res = await app.proxy.$Resources.getResources(params)
+  let res = await resApi.getResources(params)
   vdoInfo.value = res.data
-  // console.log('视频详情', res.data);
 }
 
 onMounted(async () => {
-  await getVideoDetail(Object.assign({id: $route.params.videoId}, { type: 'video' }))
+  await getVideoDetail(Object.assign({id: route.params.videoId}, { type: 'video' }))
 })
 </script>
 <style lang="scss" scoped>
@@ -105,6 +100,8 @@ onMounted(async () => {
 .error {
   color: red !important;
   background-color: black !important;
-  padding: .32rem .48rem !important;
+  font-weight: bold;
+  font-size: .3733rem;
+  padding: .42rem .52rem !important;
 }
 </style>

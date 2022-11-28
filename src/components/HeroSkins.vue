@@ -1,19 +1,22 @@
 <template>
-  <swiper 
+  <swiper
     v-if="swiperData.length"
     class="mySwiper"
     :loop="true"
     :modules="modules"
   >
-    <swiper-slide 
-      class="slide-item" 
-      v-for="(item, index) in swiperData" :key="index"
+    <swiper-slide
+      class="slide-item"
+      v-for="(item, index) in swiperData"
+      :key="index"
     >
       <div class="img-box">
-        <img :src="item.img" alt="">
+        <img :src="item.img" alt="" />
       </div>
-      <p>{{item.name}}</p>
-      <div class="page" v-if="swiperData.length">{{index+1}}/{{swiperData.length}}</div>
+      <p>{{ item.name }}</p>
+      <div class="page" v-if="swiperData.length">
+        {{ index + 1 }}/{{ swiperData.length }}
+      </div>
     </swiper-slide>
   </swiper>
   <div class="banner-loading loading-skeleton" v-else></div>
@@ -36,9 +39,9 @@ export default {
     swiperData: {
       type: Array,
       required: true,
-      default: () => []
+      default: () => [],
     },
-  },
+  }, 
   setup() {
     return {
       modules: [Pagination],
@@ -77,7 +80,7 @@ export default {
   }
 }
 .page {
-  font-size: .3733rem;
+  font-size: 0.3733rem;
   text-align: center;
 }
 .banner-loading {

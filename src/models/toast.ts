@@ -1,5 +1,5 @@
 export interface ToastType {
   msg: string;
   duration?: number;
-  className?: string;
+  className?: string | string [];
 }
