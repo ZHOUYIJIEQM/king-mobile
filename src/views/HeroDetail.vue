@@ -265,7 +265,6 @@ watch(
 onMounted(async () => {
   let res = await resApi.getResources(Object.assign({ name: String(route.params.heroName)}, { type: "hero" }));
   heroData.value = res.data;
-  console.log(heroData.value);
 });
 
 </script>
