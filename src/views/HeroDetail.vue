@@ -68,7 +68,12 @@
                     {{item.name}} <span>{{item.delay}}</span>
                   </div>
                   <div class="desc">{{item.desc}}</div>
-                  <div style="margin-top: 0.1rem; line-height: 1.5;">{{item.tips}}</div>
+                  <div style="
+                    margin-top: 0.1rem;
+                    line-height: 1.5;
+                    font-size: .32rem;
+                    color: #33333d;"
+                  >{{item.tips}}</div>
                 </li>
               </ul>
             </div>
@@ -189,8 +194,8 @@
         >
           <template #default="props">
             <div class="img-box">
-              <img :src="props.slideItem.img" alt="" />
-              <img style="transform: rotateX(180deg);" :src="props.slideItem.img" alt="" />
+              <img style="display: block;" :src="props.slideItem.img" alt="" />
+              <img style="display: block; transform: rotateX(180deg);" :src="props.slideItem.img" alt="" />
               <div 
                 class="page" 
                 style="
@@ -254,12 +259,36 @@ const showBigPic = (value: boolean) => {
   }
 }
 
+// 如果有顶层, 不要直接离开, 按一次回退键, 先关掉顶层, 再一次才离开页面
+onBeforeRouteLeave((to, from) => {
+  // if (bigPic.value) {
+  //   bigPic.value = false
+  //   return false
+  // }
+  // if (skinsBanner.value) {
+  //   skinsBanner.value = false
+  //   return false
+  // }
+
+  // 如果 val.value true 就取反关掉顶层
+  const check = (val: any) => {
+    // if (val.value) {
+    //   return val.value = false
+    // }
+    // return true
+    return val.value ? (val.value = false) : true
+  }
+
+  return check(bigPic) && check(skinsBanner)
+})
+
 watch(
-  () => route.name, 
-  (newV) => {
-    document.body.style.overflow = ''
-  }, 
-  { deep: true }
+  [bigPic, skinsBanner],
+  ([bigPicNewV, skinsBannerNewV], [bigPicOldV, skinsBannerOldV]) => {
+    if ((!bigPicNewV && bigPicOldV) || (!skinsBannerNewV && skinsBannerOldV)) {
+      document.body.style.overflow = ''
+    }
+  }
 )
 
 onMounted(async () => {

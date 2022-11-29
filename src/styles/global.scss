@@ -147,6 +147,7 @@ html, body, #app {
 }
 
 .detail-nav {
+  box-sizing: border-box;
   background-color: #fff;
   position: fixed;
   width: 100%;
@@ -180,4 +181,10 @@ html, body, #app {
 		opacity: 1;
 		transform: none;
 	}
+}
+
+// 自定义 NProgress 
+#nprogress .bar {
+  // background: #F811B2 !important; //自定义颜色
+  height: .08rem;
 }

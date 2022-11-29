@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 
-NProgress.configure({ easing: "ease", speed: 250, showSpinner: false });
+NProgress.configure({ easing: "ease", speed: 350, showSpinner: false });
 
 const router = createRouter({
   history: createWebHashHistory(),

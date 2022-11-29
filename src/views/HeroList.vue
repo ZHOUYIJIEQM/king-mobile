@@ -56,6 +56,7 @@ onMounted(async () => {
 </script>
 <style lang="scss" scoped>
 .more-hero {
+  box-sizing: border-box;
   height: 100%;
   padding-top: 1.3333rem; 
   :deep(.nav-banner-box) {
