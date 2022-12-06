@@ -22,7 +22,7 @@
           ref="slideItemBox"
           v-for="(item, index) in raceArticle"
           :key="index"
-          @scroll.passive="handleScroll(index)"
+          @scroll.passive="handleScroll"
         >
           <div
             class="item-box"

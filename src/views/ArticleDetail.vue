@@ -7,7 +7,7 @@
     <div class="detail-nav eli" v-if="articleData.title || articleData.name">
       <div class="back" @click="router.go(-1)">&lt;</div>
       <div class="title eli">{{articleData.title || articleData.name}}</div>
-      <div class="time">{{articleData.createdTime.split(' ').at(0)}}</div>
+      <div class="time">{{formatDate(articleData.createdTime)}}</div>
     </div>
     <div class="article-content" v-html="articleData.content"></div>
   </div>
@@ -21,13 +21,20 @@ export default {
 import resApi from '@/api/resource';
 const route = useRoute()
 const router = useRouter()
-const app: any = getCurrentInstance()
 const articleData = ref<any>({})
 
 async function getArticle(params: any) {
   let res = await resApi.getResources(params)
   articleData.value = res.data
 }
+
+const formatDate = (str: string|number): string => {
+  const f = (val: number): string => {
+    return val < 10 ? `0${val}` : `${val}`;
+  };
+  const d = new Date(str);
+  return `${d.getFullYear()}-${f(d.getMonth() + 1)}-${f(d.getDate())}`;
+};
 
 onMounted(async () => {
   await getArticle(Object.assign({id: route.params.articleId}, { type: 'article' }))

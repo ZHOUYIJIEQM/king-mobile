@@ -9,7 +9,6 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Banner: typeof import('./src/components/Banner.vue')['default']
     HeroSelect: typeof import('./src/components/HeroSelect.vue')['default']
-    HeroSkins: typeof import('./src/components/HeroSkins.vue')['default']
     NavBanner: typeof import('./src/components/NavBanner.vue')['default']
     Navbar: typeof import('./src/components/Navbar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
